@@ -1,0 +1,360 @@
+# GraphViz compliant export for:network_simple_cell (network: )
+
+digraph sim1 {
+fontsize=10;
+
+
+subgraph cluster_network {
+    style=filled;
+    color="#D6eeEA";
+    node [style=filled,color=white];
+    label = "Network to be simulated";
+
+node [shape=rectangle]; network_simple_cell;
+#    Population SampleCellGroup contains components of: Component(id=SampleCell type=cell) 
+node [shape=diamond]; SampleCellGroup;
+network_simple_cell -> SampleCellGroup [len=1.00, arrowhead=diamond]
+   }
+
+subgraph cluster_comps {
+    style=filled;
+    color="#CCFFCC";
+    node [style=filled,color=white];
+    label = "Components";
+
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>cell (id = SampleCell)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "cell (id = SampleCell)";
+
+"SampleCellGroup" -> "cell (id = SampleCell)" [label="1",len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>morphology (id = morphology_SampleCell)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "morphology (id = morphology_SampleCell)";
+
+"cell (id = SampleCell)" -> "morphology (id = morphology_SampleCell)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segment (id = 5)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segment (id = 5)";
+
+"morphology (id = morphology_SampleCell)" -> "segment (id = 5)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>proximal (0)</td></tr><tr><td><font color="#666666">x = 0, y = 0, z = 0, <br/>diameter = 1</font></td></tr></table>>]; "proximal (0)";
+
+"segment (id = 5)" -> "proximal (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>parent (0)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "parent (0)";
+
+"segment (id = 5)" -> "parent (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>distal (0)</td></tr><tr><td><font color="#666666">x = -30, y = 0, z = 0, <br/>diameter = 1</font></td></tr></table>>]; "distal (0)";
+
+"segment (id = 5)" -> "distal (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = Soma)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = Soma)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = Soma)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>member (0)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "member (0)";
+
+"segmentGroup (id = Soma)" -> "member (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = mainDendSec)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = mainDendSec)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = mainDendSec)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>member (1)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "member (1)";
+
+"segmentGroup (id = mainDendSec)" -> "member (1)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = subDendSec1)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = subDendSec1)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = subDendSec1)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>member (2)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "member (2)";
+
+"segmentGroup (id = subDendSec1)" -> "member (2)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = subDendSec2)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = subDendSec2)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = subDendSec2)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>member (3)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "member (3)";
+
+"segmentGroup (id = subDendSec2)" -> "member (3)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = subDendSec3)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = subDendSec3)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = subDendSec3)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>member (4)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "member (4)";
+
+"segmentGroup (id = subDendSec3)" -> "member (4)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = mainAxonSec)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = mainAxonSec)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = mainAxonSec)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>member (5)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "member (5)";
+
+"segmentGroup (id = mainAxonSec)" -> "member (5)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = all)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = all)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = all)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (0)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (0)";
+
+"segmentGroup (id = all)" -> "include (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (1)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (1)";
+
+"segmentGroup (id = all)" -> "include (1)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (2)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (2)";
+
+"segmentGroup (id = all)" -> "include (2)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (3)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (3)";
+
+"segmentGroup (id = all)" -> "include (3)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (4)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (4)";
+
+"segmentGroup (id = all)" -> "include (4)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (5)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (5)";
+
+"segmentGroup (id = all)" -> "include (5)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = soma_group)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = soma_group)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = soma_group)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (6)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (6)";
+
+"segmentGroup (id = soma_group)" -> "include (6)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = dendrite_group)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = dendrite_group)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = dendrite_group)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (7)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (7)";
+
+"segmentGroup (id = dendrite_group)" -> "include (7)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (8)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (8)";
+
+"segmentGroup (id = dendrite_group)" -> "include (8)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (9)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (9)";
+
+"segmentGroup (id = dendrite_group)" -> "include (9)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (10)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (10)";
+
+"segmentGroup (id = dendrite_group)" -> "include (10)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>segmentGroup (id = axon_group)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "segmentGroup (id = axon_group)";
+
+"morphology (id = morphology_SampleCell)" -> "segmentGroup (id = axon_group)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>include (11)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "include (11)";
+
+"segmentGroup (id = axon_group)" -> "include (11)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>biophysicalProperties (id = biophys)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "biophysicalProperties (id = biophys)";
+
+"cell (id = SampleCell)" -> "biophysicalProperties (id = biophys)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>intracellularProperties (0)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "intracellularProperties (0)";
+
+"biophysicalProperties (id = biophys)" -> "intracellularProperties (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>resistivity (0)</td></tr><tr><td><font color="#666666">value = 0.003 kg^2 m^2 s^-3 A^-2</font></td></tr></table>>]; "resistivity (0)";
+
+"intracellularProperties (0)" -> "resistivity (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>membraneProperties (0)</td></tr><tr><td><font color="#666666"></font></td></tr></table>>]; "membraneProperties (0)";
+
+"biophysicalProperties (id = biophys)" -> "membraneProperties (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>specificCapacitance (0)</td></tr><tr><td><font color="#666666">value = 0.01 kg^-1 m^-4 s^4 A^2</font></td></tr></table>>]; "specificCapacitance (0)";
+
+"membraneProperties (0)" -> "specificCapacitance (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>spikeThresh (0)</td></tr><tr><td><font color="#666666">value = 0 V</font></td></tr></table>>]; "spikeThresh (0)";
+
+"membraneProperties (0)" -> "spikeThresh (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>initMembPotential (0)</td></tr><tr><td><font color="#666666">value = -0.065 V</font></td></tr></table>>]; "initMembPotential (0)";
+
+"membraneProperties (0)" -> "initMembPotential (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>channelDensity (id = KConductance_all)</td></tr><tr><td><font color="#666666">erev = -0.077 V, condDensity = 360 kg^-1 m^-4 s^3 A^2</font></td></tr></table>>]; "channelDensity (id = KConductance_all)";
+
+"membraneProperties (0)" -> "channelDensity (id = KConductance_all)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>ionChannel (id = KConductance)</td></tr><tr><td><font color="#666666">conductance = 1.0E-11 S</font></td></tr></table>>]; "ionChannel (id = KConductance)";
+
+"channelDensity (id = KConductance_all)" -> "ionChannel (id = KConductance)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>gate (id = n)</td></tr><tr><td><font color="#666666">instances = 4</font></td></tr></table>>]; "gate (id = n)";
+
+"ionChannel (id = KConductance)" -> "gate (id = n)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>reverseRate (0)</td></tr><tr><td><font color="#666666">rate = 125 s^-1, midpoint = -0.065 V, scale = -0.08 V</font></td></tr></table>>]; "reverseRate (0)";
+
+"gate (id = n)" -> "reverseRate (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>forwardRate (0)</td></tr><tr><td><font color="#666666">rate = 100 s^-1, midpoint = -0.055 V, scale = 0.01 V</font></td></tr></table>>]; "forwardRate (0)";
+
+"gate (id = n)" -> "forwardRate (0)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>channelDensity (id = LeakConductance_all)</td></tr><tr><td><font color="#666666">erev = -0.0543 V, condDensity = 3 kg^-1 m^-4 s^3 A^2</font></td></tr></table>>]; "channelDensity (id = LeakConductance_all)";
+
+"membraneProperties (0)" -> "channelDensity (id = LeakConductance_all)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>ionChannel (id = LeakConductance)</td></tr><tr><td><font color="#666666">conductance = 1.0E-11 S</font></td></tr></table>>]; "ionChannel (id = LeakConductance)";
+
+"channelDensity (id = LeakConductance_all)" -> "ionChannel (id = LeakConductance)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>channelDensity (id = NaConductance_all)</td></tr><tr><td><font color="#666666">erev = 0.05 V, condDensity = 1200 kg^-1 m^-4 s^3 A^2</font></td></tr></table>>]; "channelDensity (id = NaConductance_all)";
+
+"membraneProperties (0)" -> "channelDensity (id = NaConductance_all)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>ionChannel (id = NaConductance)</td></tr><tr><td><font color="#666666">conductance = 1.0E-11 S</font></td></tr></table>>]; "ionChannel (id = NaConductance)";
+
+"channelDensity (id = NaConductance_all)" -> "ionChannel (id = NaConductance)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>gate (id = m)</td></tr><tr><td><font color="#666666">instances = 3</font></td></tr></table>>]; "gate (id = m)";
+
+"ionChannel (id = NaConductance)" -> "gate (id = m)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>reverseRate (1)</td></tr><tr><td><font color="#666666">rate = 4000 s^-1, midpoint = -0.065 V, scale = -0.018 V</font></td></tr></table>>]; "reverseRate (1)";
+
+"gate (id = m)" -> "reverseRate (1)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>forwardRate (1)</td></tr><tr><td><font color="#666666">rate = 1000 s^-1, midpoint = -0.04 V, scale = 0.01 V</font></td></tr></table>>]; "forwardRate (1)";
+
+"gate (id = m)" -> "forwardRate (1)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>gate (id = h)</td></tr><tr><td><font color="#666666">instances = 1</font></td></tr></table>>]; "gate (id = h)";
+
+"ionChannel (id = NaConductance)" -> "gate (id = h)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>reverseRate (2)</td></tr><tr><td><font color="#666666">rate = 1000 s^-1, midpoint = -0.035 V, scale = 0.01 V</font></td></tr></table>>]; "reverseRate (2)";
+
+"gate (id = h)" -> "reverseRate (2)" [len=1.00, arrowhead=diamond]
+node [shape=ellipse label=<<table border="0" cellborder="0"><tr><td>forwardRate (2)</td></tr><tr><td><font color="#666666">rate = 70 s^-1, midpoint = -0.065 V, scale = -0.02 V</font></td></tr></table>>]; "forwardRate (2)";
+
+"gate (id = h)" -> "forwardRate (2)" [len=1.00, arrowhead=diamond]
+   }
+
+subgraph cluster_compTypes {
+   style=filled;
+   color="#D6E0EA";
+   node [style="rounded, filled",color=white];
+   label = "Component Types";
+   node [style="rounded, filled",color=white];
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>cell</td></tr><tr><td><font color="#666666">spiking (none)</font></td></tr><tr><td><font color="#666666">debugVal (none)</font></td></tr><tr><td><font color="#666666">totChanCurrent (current)</font></td></tr><tr><td><font color="#666666">totSpecCap (specificCapacitance)</font></td></tr><tr><td><font color="#666666">surfaceArea (area)</font></td></tr><tr><td><font color="#666666">iCa (current)</font></td></tr><tr><td><font color="#666666">caConc (concentration)</font></td></tr><tr><td><font color="#666666">caConcExt (concentration)</font></td></tr><tr><td><font color="#666666">v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#99CC00">initMembPot = biophysicalProperties/membraneProperties/initMembPotential/value</font></td></tr><tr><td><font color="#99CC00">thresh = biophysicalProperties/membraneProperties/spikeThresh/value</font></td></tr><tr><td><font color="#99CC00">debug = biophysicalProperties/membraneProperties/totChanCurrent</font></td></tr><tr><td><font color="#99CC00">surfaceArea = morphology/segment/surfaceArea</font></td></tr><tr><td><font color="#99CC00">totSpecCap = biophysicalProperties/totSpecCap</font></td></tr><tr><td><font color="#99CC00">totCap = totSpecCap * surfaceArea </font></td></tr><tr><td><font color="#99CC00">iChannels = biophysicalProperties/membraneProperties/totChanCurrent</font></td></tr><tr><td><font color="#99CC00">iSyn = synapses[*]/i  (REDUCE: add)</font></td></tr><tr><td><font color="#99CC00">iCa = biophysicalProperties/membraneProperties/iCa</font></td></tr><tr><td><font color="#99CC00">caConc = biophysicalProperties/intracellularProperties/caConc</font></td></tr><tr><td><font color="#99CC00">caConcExt = biophysicalProperties/intracellularProperties/caConcExt</font></td></tr><tr><td><font color="#666633">v' = (iChannels + iSyn) / totCap</font></td></tr><tr><td><font color="#996633">IF ((v &gt; thresh) AND (spiking &lt; 0.5)) THEN </font></td></tr><tr><td><font color="#996633">(spiking = 1)</font></td></tr><tr><td><font color="#996633">IF (v &lt; thresh) THEN </font></td></tr><tr><td><font color="#996633">(spiking = 0)</font></td></tr><tr><td><font color="#996633">IF (t &gt;_or_equal_to 0) THEN </font></td></tr><tr><td><font color="#996633">(debugVal = debug)</font></td></tr></table>>]; cell;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseCellMembPot</td></tr><tr><td><font color="#666666">v (voltage)</font></td></tr></table>>]; baseCellMembPot;
+cell -> baseCellMembPot [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseCell</td></tr></table>>]; baseCell;
+baseCellMembPot -> baseCell [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>morphology</td></tr></table>>]; morphology;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segment</td></tr><tr><td><font color="#666666">surfaceArea (area)</font></td></tr><tr><td><font color="#666666">radDist (length)</font></td></tr><tr><td><font color="#666666">length (length)</font></td></tr><tr><td><font color="#662211">LEN (length) == 1.0</font></td></tr><tr><td><font color="#99CC00">radDist = distal/radius</font></td></tr><tr><td><font color="#99CC00">dx = distal/x</font></td></tr><tr><td><font color="#99CC00">dy = distal/y</font></td></tr><tr><td><font color="#99CC00">dz = distal/z</font></td></tr><tr><td><font color="#99CC00">px = proximal/x</font></td></tr><tr><td><font color="#99CC00">py = proximal/y</font></td></tr><tr><td><font color="#99CC00">pz = proximal/z</font></td></tr><tr><td><font color="#99CC00">length = sqrt(((dx - px) * (dx - px) + (dy - py) * (dy - py) + (dz - pz) * (dz - pz))/(LEN * LEN)) * LEN</font></td></tr><tr><td><font color="#99CC00">surfaceArea = IF (length .eq. 0) THEN 4 * radDist * radDist * 3.14159265) ELSE 2 * radDist * 3.14159265 * length)</font></td></tr></table>>]; segment;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>proximal</td></tr><tr><td><font color="#666666">radius (length)</font></td></tr><tr><td><font color="#666666">x (length)</font></td></tr><tr><td><font color="#666666">y (length)</font></td></tr><tr><td><font color="#666666">z (length)</font></td></tr><tr><td><font color="#99CC00">radius = 0.000001 * diameter / 2</font></td></tr><tr><td><font color="#99CC00">x = 0.000001 * x</font></td></tr><tr><td><font color="#99CC00">y = 0.000001 * y</font></td></tr><tr><td><font color="#99CC00">z = 0.000001 * z</font></td></tr></table>>]; proximal;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>pointDiam</td></tr><tr><td><font color="#666666">radius (length)</font></td></tr><tr><td><font color="#666666">x (length)</font></td></tr><tr><td><font color="#666666">y (length)</font></td></tr><tr><td><font color="#666666">z (length)</font></td></tr><tr><td><font color="#669999">diameter (none) </font></td></tr><tr><td><font color="#99CC00">radius = 0.000001 * diameter / 2</font></td></tr><tr><td><font color="#99CC00">x = 0.000001 * x</font></td></tr><tr><td><font color="#99CC00">y = 0.000001 * y</font></td></tr><tr><td><font color="#99CC00">z = 0.000001 * z</font></td></tr></table>>]; pointDiam;
+proximal -> pointDiam [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>parent</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; parent;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>distal</td></tr><tr><td><font color="#666666">radius (length)</font></td></tr><tr><td><font color="#666666">x (length)</font></td></tr><tr><td><font color="#666666">y (length)</font></td></tr><tr><td><font color="#666666">z (length)</font></td></tr><tr><td><font color="#99CC00">radius = 0.000001 * diameter / 2</font></td></tr><tr><td><font color="#99CC00">x = 0.000001 * x</font></td></tr><tr><td><font color="#99CC00">y = 0.000001 * y</font></td></tr><tr><td><font color="#99CC00">z = 0.000001 * z</font></td></tr></table>>]; distal;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>pointDiam</td></tr><tr><td><font color="#666666">radius (length)</font></td></tr><tr><td><font color="#666666">x (length)</font></td></tr><tr><td><font color="#666666">y (length)</font></td></tr><tr><td><font color="#666666">z (length)</font></td></tr><tr><td><font color="#669999">diameter (none) </font></td></tr><tr><td><font color="#99CC00">radius = 0.000001 * diameter / 2</font></td></tr><tr><td><font color="#99CC00">x = 0.000001 * x</font></td></tr><tr><td><font color="#99CC00">y = 0.000001 * y</font></td></tr><tr><td><font color="#99CC00">z = 0.000001 * z</font></td></tr></table>>]; pointDiam;
+distal -> pointDiam [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>member</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; member;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>member</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; member;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>member</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; member;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>member</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; member;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>member</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; member;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>member</td></tr><tr><td><font color="#B2C0D9">segment</font></td></tr></table>>]; member;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>segmentGroup</td></tr><tr><td><font color="#B2C0D9">id</font></td></tr></table>>]; segmentGroup;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>include</td></tr><tr><td><font color="#B2C0D9">href</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr></table>>]; include;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>biophysicalProperties</td></tr><tr><td><font color="#666666">totSpecCap (specificCapacitance)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#99CC00">totSpecCap = membraneProperties/totSpecCap</font></td></tr></table>>]; biophysicalProperties;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>intracellularProperties</td></tr><tr><td><font color="#666666">caConc (concentration)</font></td></tr><tr><td><font color="#666666">caConcExt (concentration)</font></td></tr><tr><td><font color="#99CC00">caConc = speciesList[ion='ca']/concentration  (REDUCE: add)</font></td></tr><tr><td><font color="#99CC00">caConcExt = speciesList[ion='ca']/extConcentration  (REDUCE: add)</font></td></tr></table>>]; intracellularProperties;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>resistivity</td></tr><tr><td><font color="#669999">value (resistivity) </font></td></tr></table>>]; resistivity;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>membraneProperties</td></tr><tr><td><font color="#666666">totChanCurrent (current)</font></td></tr><tr><td><font color="#666666">iCa (current)</font></td></tr><tr><td><font color="#666666">totSpecCap (specificCapacitance)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#666699">REQUIRES: surfaceArea (area)</font></td></tr><tr><td><font color="#99CC00">totSpecCap = specificCapacitance/totSpecCap</font></td></tr><tr><td><font color="#99CC00">totChanPopCurrent = populations[*]/i  (REDUCE: add)</font></td></tr><tr><td><font color="#99CC00">totChanDensCurrentDensity = channelDensities[*]/iDensity  (REDUCE: add)</font></td></tr><tr><td><font color="#99CC00">totChanCurrent = totChanPopCurrent + (totChanDensCurrentDensity * surfaceArea)</font></td></tr><tr><td><font color="#99CC00">totChanPopCurrentCa = populations[ion='ca']/i  (REDUCE: add)</font></td></tr><tr><td><font color="#99CC00">totChanDensCurrentDensityCa = channelDensities[ion='ca']/iDensity  (REDUCE: add)</font></td></tr><tr><td><font color="#99CC00">iCa = totChanPopCurrentCa + (totChanDensCurrentDensityCa * surfaceArea)</font></td></tr></table>>]; membraneProperties;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>specificCapacitance</td></tr><tr><td><font color="#666666">totSpecCap (specificCapacitance)</font></td></tr><tr><td><font color="#669999">value (specificCapacitance) </font></td></tr><tr><td><font color="#99CC00">totSpecCap = value</font></td></tr></table>>]; specificCapacitance;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>spikeThresh</td></tr><tr><td><font color="#669999">value (voltage) </font></td></tr></table>>]; spikeThresh;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>initMembPotential</td></tr><tr><td><font color="#669999">value (voltage) </font></td></tr></table>>]; initMembPotential;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>channelDensity</td></tr><tr><td><font color="#666666">gDensity (conductanceDensity)</font></td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#669999">erev (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr><tr><td><font color="#B2C0D9">ion</font></td></tr><tr><td><font color="#99CC00">channelf = ionChannel/fopen</font></td></tr><tr><td><font color="#99CC00">gDensity = condDensity * channelf</font></td></tr><tr><td><font color="#99CC00">iDensity = gDensity * (erev - v)</font></td></tr></table>>]; channelDensity;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseChannelDensityCond</td></tr><tr><td><font color="#666666">gDensity (conductanceDensity)</font></td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#669999">condDensity (conductanceDensity) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr></table>>]; baseChannelDensityCond;
+channelDensity -> baseChannelDensityCond [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseChannelDensity</td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr></table>>]; baseChannelDensity;
+baseChannelDensityCond -> baseChannelDensity [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>ionChannelHH</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#B2C0D9">neuroLexId</font></td></tr><tr><td><font color="#B2C0D9">species</font></td></tr><tr><td><font color="#99CC00">conductanceScale = conductanceScaling/factor</font></td></tr><tr><td><font color="#99CC00">fopenUnscaled = gates[*]/fcond  (REDUCE: multiply)</font></td></tr><tr><td><font color="#99CC00">fopen = conductanceScale * fopenUnscaled</font></td></tr><tr><td><font color="#99CC00">g = conductance * fopen</font></td></tr></table>>]; ionChannelHH;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>ionChannel</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; ionChannel;
+ionChannelHH -> ionChannel [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseIonChannel</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#669999">conductance (conductance) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseIonChannel;
+ionChannel -> baseIonChannel [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>gateHH</td></tr><tr><td><font color="#666666">alpha (per_time)</font></td></tr><tr><td><font color="#666666">beta (per_time)</font></td></tr><tr><td><font color="#666666">tau (time)</font></td></tr><tr><td><font color="#666666">inf (none)</font></td></tr><tr><td><font color="#666666">rateScale (none)</font></td></tr><tr><td><font color="#666666">fcond (none)</font></td></tr><tr><td><font color="#666666">q (none)</font></td></tr><tr><td><font color="#99CC00">rateScale = q10Settings/q10</font></td></tr><tr><td><font color="#99CC00">alpha = forwardRate/r</font></td></tr><tr><td><font color="#99CC00">beta = reverseRate/r</font></td></tr><tr><td><font color="#99CC00">fcond = q^instances</font></td></tr><tr><td><font color="#99CC00">tauExplicit = timeCourse/t</font></td></tr><tr><td><font color="#99CC00">infExplicit = steadyState/x</font></td></tr><tr><td><font color="#99CC00">inf = IF (infExplicit .geq. 0) THEN infExplicit) ELSE alpha/(alpha+beta))</font></td></tr><tr><td><font color="#99CC00">tau = IF (tauExplicit .geq. 0) THEN tauExplicit / rateScale) ELSE 1/((alpha+beta) * rateScale))</font></td></tr><tr><td><font color="#666633">q' = (inf - q) / tau</font></td></tr></table>>]; gateHH;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseGate</td></tr><tr><td><font color="#666666">fcond (none)</font></td></tr><tr><td><font color="#666666">q (none)</font></td></tr><tr><td><font color="#669999">instances (none) </font></td></tr></table>>]; baseGate;
+gateHH -> baseGate [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>HHExpRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#99CC00">r = rate * exp((v - midpoint)/scale)</font></td></tr></table>>]; HHExpRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseHHRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#669999">rate (per_time), midpoint (voltage), scale (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseHHRate;
+HHExpRate -> baseHHRate [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseVoltageDepRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseVoltageDepRate;
+baseHHRate -> baseVoltageDepRate [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>HHExpLinearRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#99CC00">x = (v - midpoint) / scale</font></td></tr><tr><td><font color="#99CC00">r = rate * x / (1 - exp(0 - x))</font></td></tr></table>>]; HHExpLinearRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseHHRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#669999">rate (per_time), midpoint (voltage), scale (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseHHRate;
+HHExpLinearRate -> baseHHRate [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseVoltageDepRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseVoltageDepRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>channelDensity</td></tr><tr><td><font color="#666666">gDensity (conductanceDensity)</font></td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#669999">erev (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr><tr><td><font color="#B2C0D9">ion</font></td></tr><tr><td><font color="#99CC00">channelf = ionChannel/fopen</font></td></tr><tr><td><font color="#99CC00">gDensity = condDensity * channelf</font></td></tr><tr><td><font color="#99CC00">iDensity = gDensity * (erev - v)</font></td></tr></table>>]; channelDensity;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseChannelDensityCond</td></tr><tr><td><font color="#666666">gDensity (conductanceDensity)</font></td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#669999">condDensity (conductanceDensity) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr></table>>]; baseChannelDensityCond;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseChannelDensity</td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr></table>>]; baseChannelDensity;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>ionChannelPassive</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#B2C0D9">neuroLexId</font></td></tr><tr><td><font color="#99CC00">fopen = 1</font></td></tr><tr><td><font color="#99CC00">g = conductance</font></td></tr></table>>]; ionChannelPassive;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>ionChannel</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; ionChannel;
+ionChannelPassive -> ionChannel [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseIonChannel</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#669999">conductance (conductance) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseIonChannel;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>channelDensity</td></tr><tr><td><font color="#666666">gDensity (conductanceDensity)</font></td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#669999">erev (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#B2C0D9">segmentGroup</font></td></tr><tr><td><font color="#B2C0D9">ion</font></td></tr><tr><td><font color="#99CC00">channelf = ionChannel/fopen</font></td></tr><tr><td><font color="#99CC00">gDensity = condDensity * channelf</font></td></tr><tr><td><font color="#99CC00">iDensity = gDensity * (erev - v)</font></td></tr></table>>]; channelDensity;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseChannelDensityCond</td></tr><tr><td><font color="#666666">gDensity (conductanceDensity)</font></td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#669999">condDensity (conductanceDensity) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr></table>>]; baseChannelDensityCond;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseChannelDensity</td></tr><tr><td><font color="#666666">iDensity (currentDensity)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr></table>>]; baseChannelDensity;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>ionChannelHH</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#666699">REQUIRES: temperature (temperature)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#B2C0D9">neuroLexId</font></td></tr><tr><td><font color="#B2C0D9">species</font></td></tr><tr><td><font color="#99CC00">conductanceScale = conductanceScaling/factor</font></td></tr><tr><td><font color="#99CC00">fopenUnscaled = gates[*]/fcond  (REDUCE: multiply)</font></td></tr><tr><td><font color="#99CC00">fopen = conductanceScale * fopenUnscaled</font></td></tr><tr><td><font color="#99CC00">g = conductance * fopen</font></td></tr></table>>]; ionChannelHH;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>ionChannel</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; ionChannel;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseIonChannel</td></tr><tr><td><font color="#666666">g (conductance)</font></td></tr><tr><td><font color="#666666">fopen (none)</font></td></tr><tr><td><font color="#669999">conductance (conductance) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseIonChannel;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>gateHH</td></tr><tr><td><font color="#666666">alpha (per_time)</font></td></tr><tr><td><font color="#666666">beta (per_time)</font></td></tr><tr><td><font color="#666666">tau (time)</font></td></tr><tr><td><font color="#666666">inf (none)</font></td></tr><tr><td><font color="#666666">rateScale (none)</font></td></tr><tr><td><font color="#666666">fcond (none)</font></td></tr><tr><td><font color="#666666">q (none)</font></td></tr><tr><td><font color="#99CC00">rateScale = q10Settings/q10</font></td></tr><tr><td><font color="#99CC00">alpha = forwardRate/r</font></td></tr><tr><td><font color="#99CC00">beta = reverseRate/r</font></td></tr><tr><td><font color="#99CC00">fcond = q^instances</font></td></tr><tr><td><font color="#99CC00">tauExplicit = timeCourse/t</font></td></tr><tr><td><font color="#99CC00">infExplicit = steadyState/x</font></td></tr><tr><td><font color="#99CC00">inf = IF (infExplicit .geq. 0) THEN infExplicit) ELSE alpha/(alpha+beta))</font></td></tr><tr><td><font color="#99CC00">tau = IF (tauExplicit .geq. 0) THEN tauExplicit / rateScale) ELSE 1/((alpha+beta) * rateScale))</font></td></tr><tr><td><font color="#666633">q' = (inf - q) / tau</font></td></tr></table>>]; gateHH;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseGate</td></tr><tr><td><font color="#666666">fcond (none)</font></td></tr><tr><td><font color="#666666">q (none)</font></td></tr><tr><td><font color="#669999">instances (none) </font></td></tr></table>>]; baseGate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>HHExpRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#99CC00">r = rate * exp((v - midpoint)/scale)</font></td></tr></table>>]; HHExpRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseHHRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#669999">rate (per_time), midpoint (voltage), scale (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseHHRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseVoltageDepRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseVoltageDepRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>HHExpLinearRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#99CC00">x = (v - midpoint) / scale</font></td></tr><tr><td><font color="#99CC00">r = rate * x / (1 - exp(0 - x))</font></td></tr></table>>]; HHExpLinearRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseHHRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#669999">rate (per_time), midpoint (voltage), scale (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseHHRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseVoltageDepRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseVoltageDepRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>gateHH</td></tr><tr><td><font color="#666666">alpha (per_time)</font></td></tr><tr><td><font color="#666666">beta (per_time)</font></td></tr><tr><td><font color="#666666">tau (time)</font></td></tr><tr><td><font color="#666666">inf (none)</font></td></tr><tr><td><font color="#666666">rateScale (none)</font></td></tr><tr><td><font color="#666666">fcond (none)</font></td></tr><tr><td><font color="#666666">q (none)</font></td></tr><tr><td><font color="#99CC00">rateScale = q10Settings/q10</font></td></tr><tr><td><font color="#99CC00">alpha = forwardRate/r</font></td></tr><tr><td><font color="#99CC00">beta = reverseRate/r</font></td></tr><tr><td><font color="#99CC00">fcond = q^instances</font></td></tr><tr><td><font color="#99CC00">tauExplicit = timeCourse/t</font></td></tr><tr><td><font color="#99CC00">infExplicit = steadyState/x</font></td></tr><tr><td><font color="#99CC00">inf = IF (infExplicit .geq. 0) THEN infExplicit) ELSE alpha/(alpha+beta))</font></td></tr><tr><td><font color="#99CC00">tau = IF (tauExplicit .geq. 0) THEN tauExplicit / rateScale) ELSE 1/((alpha+beta) * rateScale))</font></td></tr><tr><td><font color="#666633">q' = (inf - q) / tau</font></td></tr></table>>]; gateHH;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseGate</td></tr><tr><td><font color="#666666">fcond (none)</font></td></tr><tr><td><font color="#666666">q (none)</font></td></tr><tr><td><font color="#669999">instances (none) </font></td></tr></table>>]; baseGate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>HHSigmoidRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#99CC00">r = rate / (1 + exp(0 - (v - midpoint)/scale))</font></td></tr></table>>]; HHSigmoidRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseHHRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#669999">rate (per_time), midpoint (voltage), scale (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseHHRate;
+HHSigmoidRate -> baseHHRate [len=1.00, arrowhead=onormal]
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseVoltageDepRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseVoltageDepRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>HHExpRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr><tr><td><font color="#99CC00">r = rate * exp((v - midpoint)/scale)</font></td></tr></table>>]; HHExpRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseHHRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#669999">rate (per_time), midpoint (voltage), scale (voltage) </font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseHHRate;
+node [shape=box label=<<table border="0" cellborder="0"><tr><td>baseVoltageDepRate</td></tr><tr><td><font color="#666666">r (per_time)</font></td></tr><tr><td><font color="#666699">REQUIRES: v (voltage)</font></td></tr></table>>]; baseVoltageDepRate;
+   }
+
+"cell (id = SampleCell)" -> cell [len=1.00]
+"morphology (id = morphology_SampleCell)" -> morphology [len=1.00]
+"segment (id = 5)" -> segment [len=1.00]
+"proximal (0)" -> proximal [len=1.00]
+"parent (0)" -> parent [len=1.00]
+"distal (0)" -> distal [len=1.00]
+"segmentGroup (id = Soma)" -> segmentGroup [len=1.00]
+"member (0)" -> member [len=1.00]
+"segmentGroup (id = mainDendSec)" -> segmentGroup [len=1.00]
+"member (1)" -> member [len=1.00]
+"segmentGroup (id = subDendSec1)" -> segmentGroup [len=1.00]
+"member (2)" -> member [len=1.00]
+"segmentGroup (id = subDendSec2)" -> segmentGroup [len=1.00]
+"member (3)" -> member [len=1.00]
+"segmentGroup (id = subDendSec3)" -> segmentGroup [len=1.00]
+"member (4)" -> member [len=1.00]
+"segmentGroup (id = mainAxonSec)" -> segmentGroup [len=1.00]
+"member (5)" -> member [len=1.00]
+"segmentGroup (id = all)" -> segmentGroup [len=1.00]
+"include (0)" -> include [len=1.00]
+"include (1)" -> include [len=1.00]
+"include (2)" -> include [len=1.00]
+"include (3)" -> include [len=1.00]
+"include (4)" -> include [len=1.00]
+"include (5)" -> include [len=1.00]
+"segmentGroup (id = soma_group)" -> segmentGroup [len=1.00]
+"include (6)" -> include [len=1.00]
+"segmentGroup (id = dendrite_group)" -> segmentGroup [len=1.00]
+"include (7)" -> include [len=1.00]
+"include (8)" -> include [len=1.00]
+"include (9)" -> include [len=1.00]
+"include (10)" -> include [len=1.00]
+"segmentGroup (id = axon_group)" -> segmentGroup [len=1.00]
+"include (11)" -> include [len=1.00]
+"biophysicalProperties (id = biophys)" -> biophysicalProperties [len=1.00]
+"intracellularProperties (0)" -> intracellularProperties [len=1.00]
+"resistivity (0)" -> resistivity [len=1.00]
+"membraneProperties (0)" -> membraneProperties [len=1.00]
+"specificCapacitance (0)" -> specificCapacitance [len=1.00]
+"spikeThresh (0)" -> spikeThresh [len=1.00]
+"initMembPotential (0)" -> initMembPotential [len=1.00]
+"channelDensity (id = KConductance_all)" -> channelDensity [len=1.00]
+"ionChannel (id = KConductance)" -> ionChannelHH [len=1.00]
+"gate (id = n)" -> gateHH [len=1.00]
+"reverseRate (0)" -> HHExpRate [len=1.00]
+"forwardRate (0)" -> HHExpLinearRate [len=1.00]
+"channelDensity (id = LeakConductance_all)" -> channelDensity [len=1.00]
+"ionChannel (id = LeakConductance)" -> ionChannelPassive [len=1.00]
+"channelDensity (id = NaConductance_all)" -> channelDensity [len=1.00]
+"ionChannel (id = NaConductance)" -> ionChannelHH [len=1.00]
+"gate (id = m)" -> gateHH [len=1.00]
+"reverseRate (1)" -> HHExpRate [len=1.00]
+"forwardRate (1)" -> HHExpLinearRate [len=1.00]
+"gate (id = h)" -> gateHH [len=1.00]
+"reverseRate (2)" -> HHSigmoidRate [len=1.00]
+"forwardRate (2)" -> HHExpRate [len=1.00]
+}

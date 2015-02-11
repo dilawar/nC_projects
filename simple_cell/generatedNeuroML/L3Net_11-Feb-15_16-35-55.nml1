@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mml="http://morphml.org/morphml/schema" xmlns:cml="http://morphml.org/channelml/schema" xmlns:bio="http://morphml.org/biophysics/schema" xmlns:net="http://morphml.org/networkml/schema" xsi:schemaLocation="http://morphml.org/neuroml/schema http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd" lengthUnits="micrometer">
+
+<meta:notes>
+
+Complete network structure generated with project: simple_cell saved with neuroConstruct v1.7.1 on: 16:35:55, 11-Feb-15
+
+Cell Group: SampleCellGroup contains 1 cells
+
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property tag="neuroConstruct_random_seed" value="-1554439544"/>
+
+    <meta:property tag="neuroConstruct_sim_config" value="Default Simulation Configuration"/>
+
+    <meta:property tag="neuroConstruct_sim_duration" value="100.0"/>
+
+    <meta:property tag="neuroConstruct_sim_time_step" value="0.02"/>
+
+    <meta:property tag="neuroConstruct_temperature" value="6.3"/>
+</meta:properties>
+
+    <!--Note: the annotation below contains data to facilitate the reloading of this file into an empty neuroConstruct project.
+This information should be ignored by any other NeuroML Level 3 compliant application-->
+
+
+<meta:annotation>
+    
+
+<java version="1.7.0_75" class="java.beans.XMLDecoder">
+ <object class="ucl.physiol.neuroconstruct.project.BasicProjectInfo">
+  <void property="projectDescription">
+   <string>This is a simple project with a single cell placed randomly in a 3D rectangular box.
+
+Go to tab Generate, press Generate Cell Positions and Connections, and then to visualise the results, go to tab Visualisation and press View, with Latest Generated Positions selected in the drop down box.
+
+If NEURON or GENESIS are installed, the cell can be simulated via tab Export.</string>
+  </void>
+  <void property="projectFileVersion">
+   <string>neuroConstruct v1.7.1</string>
+  </void>
+  <void property="projectName">
+   <string>simple_cell</string>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.RegionsInfo">
+  <void property="internalData">
+   <void method="get">
+    <string>Name</string>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
+   </void>
+   <void method="get">
+    <string>Colour</string>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>255</int>
+      <int>255</int>
+      <int>255</int>
+      <int>255</int>
+     </object>
+    </void>
+   </void>
+   <void method="get">
+    <string>Description</string>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.RectangularBox">
+      <void property="parameterList">
+       <void id="InternalParameter0" index="4">
+        <void class="ucl.physiol.neuroconstruct.project.InternalParameter" method="getField">
+         <string>value</string>
+         <void method="set">
+          <object idref="InternalParameter0"/>
+          <float>50.0</float>
+         </void>
+        </void>
+       </void>
+      </void>
+     </object>
+    </void>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.CellGroupsInfo">
+  <void property="internalData">
+   <void method="get">
+    <string>Cell Packing Adapter</string>
+    <void method="add">
+     <object class="ucl.physiol.neuroconstruct.project.packing.RandomCellPackingAdapter"/>
+    </void>
+   </void>
+   <void method="get">
+    <string>Cell Type</string>
+    <void method="add">
+     <string>SampleCell</string>
+    </void>
+   </void>
+   <void method="get">
+    <string>Priority</string>
+    <void method="add">
+     <int>10</int>
+    </void>
+   </void>
+   <void method="get">
+    <string>Colour</string>
+    <void method="add">
+     <object class="java.awt.Color">
+      <int>255</int>
+      <int>0</int>
+      <int>0</int>
+      <int>255</int>
+     </object>
+    </void>
+   </void>
+   <void method="get">
+    <string>Region Name</string>
+    <void method="add">
+     <string>SampleRegion</string>
+    </void>
+   </void>
+   <void method="get">
+    <string>Cell Group Name</string>
+    <void method="add">
+     <string>SampleCellGroup</string>
+    </void>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.ElecInputInfo">
+  <void property="allStims">
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.simulation.IClampSettings">
+     <void property="amp">
+      <void property="fixedNum">
+       <float>0.2</float>
+      </void>
+     </void>
+     <void property="cellGroup">
+      <string>SampleCellGroup</string>
+     </void>
+     <void id="NumberGenerator0" property="dur">
+      <void class="ucl.physiol.neuroconstruct.utils.NumberGenerator" method="getField">
+       <string>numberType</string>
+       <void method="set">
+        <object idref="NumberGenerator0"/>
+        <int>11</int>
+       </void>
+      </void>
+     </void>
+     <void property="reference">
+      <string>SampleIClamp</string>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.SimpleNetworkConnectionsInfo"/>
+ <object class="ucl.physiol.neuroconstruct.project.SimPlotInfo">
+  <void property="allSimPlots">
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>SampleCellGroup</string>
+     </void>
+     <void property="cellNumber">
+      <string>*</string>
+     </void>
+     <void property="graphWindow">
+      <string>SampleGraph</string>
+     </void>
+     <void property="maxValue">
+      <float>50.0</float>
+     </void>
+     <void property="minValue">
+      <float>-90.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>SamplePlot</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.project.SimConfigInfo">
+  <void property="allSimConfigs">
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>SampleCellGroup</string>
+      </void>
+     </void>
+     <void property="description">
+      <string>This is the default configuration of the Cell Groups, stimulations, plots, etc for this project</string>
+     </void>
+     <void property="inputs">
+      <void method="add">
+       <string>SampleIClamp</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>Default Simulation Configuration</string>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>SamplePlot</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>100.0</float>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+ <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/>
+ <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings"/>
+</java>
+
+    </meta:annotation>
+
+
+
+<cells>
+    <cell name="SampleCell">
+
+            <meta:notes>A Simple cell for testing purposes</meta:notes>
+
+            <mml:segments>
+
+                <mml:segment id="0" name="Soma" cable="0">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="16.0"/>
+                    <mml:distal x="0.0" y="0.0" z="0.0" diameter="16.0"/>
+                </mml:segment>
+
+                <mml:segment id="1" name="mainDend" parent="0" cable="1">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="20.0" y="0.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="2" name="subDend1" parent="1" cable="2">
+                    <mml:proximal x="20.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="40.0" y="15.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="3" name="subDend2" parent="1" cable="3">
+                    <mml:proximal x="20.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="45.0" y="0.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="4" name="subDend3" parent="1" cable="4">
+                    <mml:proximal x="20.0" y="0.0" z="0.0" diameter="2.0"/>
+                    <mml:distal x="40.0" y="-15.0" z="0.0" diameter="2.0"/>
+                </mml:segment>
+
+                <mml:segment id="5" name="mainAxon" parent="0" cable="5">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="1.0"/>
+                    <mml:distal x="-30.0" y="0.0" z="0.0" diameter="1.0"/>
+                </mml:segment>
+
+                
+            </mml:segments>
+
+            <mml:cables>
+
+                <mml:cable id="0" name="Soma">
+                    <meta:group>all</meta:group>
+                    <meta:group>soma_group</meta:group>
+                </mml:cable>
+
+                <mml:cable id="1" name="mainDendSec" fract_along_parent="0.5">
+                    <meta:group>all</meta:group>
+                    <meta:group>dendrite_group</meta:group>
+                </mml:cable>
+
+                <mml:cable id="2" name="subDendSec1">
+                    <meta:group>all</meta:group>
+                    <meta:group>dendrite_group</meta:group>
+                </mml:cable>
+
+                <mml:cable id="3" name="subDendSec2">
+                    <meta:group>all</meta:group>
+                    <meta:group>dendrite_group</meta:group>
+                </mml:cable>
+
+                <mml:cable id="4" name="subDendSec3">
+                    <meta:group>all</meta:group>
+                    <meta:group>dendrite_group</meta:group>
+                </mml:cable>
+
+                <mml:cable id="5" name="mainAxonSec" fract_along_parent="0.5">
+                    <meta:group>all</meta:group>
+                    <meta:group>axon_group</meta:group>
+                </mml:cable>
+
+            </mml:cables>
+
+                <!--Adding the biophysical parameters-->
+
+            <biophysics units="Physiological Units">
+
+                <bio:mechanism name="KConductance" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="36.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="LeakConductance" type="Channel Mechanism" passive_conductance="true">
+                    <bio:parameter name="e" value="-54.3">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="gmax" value="0.3">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="NaConductance" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="120.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+                
+
+                <bio:spec_capacitance>
+                    <bio:parameter value="1.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_capacitance>
+
+                <bio:spec_axial_resistance>
+                    <bio:parameter value="0.03">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_axial_resistance>
+
+                <bio:init_memb_potential>
+                    <bio:parameter value="-65.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:init_memb_potential></biophysics>
+
+            <connectivity>
+                <net:potential_syn_loc synapse_type="DoubExpSyn">
+                    <net:group>all</net:group>
+                </net:potential_syn_loc>
+            </connectivity>
+
+        </cell>
+</cells>
+
+<channels units="Physiological Units">
+    <channel_type name="LeakConductance" density="yes" xmlns="http://morphml.org/channelml/schema">
+        
+        <status value="stable"/>
+
+        <meta:notes>Simple example of a leak/passive conductance. Note: for GENESIS cells with a single leak conductance,
+        it is better to use the Rm and Em variables for a passive current.</meta:notes>
+
+        <current_voltage_relation cond_law="ohmic" ion="non_specific" default_erev="-54.3" default_gmax="0.3"/>
+
+    </channel_type>
+    <channel_type name="NaConductance" density="yes" xmlns="http://morphml.org/channelml/schema">
+        
+        <status value="stable">
+            <meta:comment>Equations adapted from HH paper for modern convention of external potential being zero</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>Simple example of Na conductance in squid giant axon. Based on channel from Hodgkin and Huxley 1952</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>A. L. Hodgkin and A. F. Huxley, A quantitative description of membrane current and 
+            its application to conduction and excitation in nerve, J. Physiol., vol. 117, pp. 500-544, 1952.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=12991237</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="na" default_erev="50" default_gmax="120"> 
+            
+            <gate name="m" instances="3">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+
+                <transition name="alpha" from="m0" to="m" expr_form="exp_linear" rate="1" scale="10" midpoint="-40"/>  
+                <transition name="beta" from="m" to="m0" expr_form="exponential" rate="4" scale="-18" midpoint="-65"/>  
+            </gate>
+            
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+
+                <transition name="alpha" from="h0" to="h" expr_form="exponential" rate="0.07" scale="-20" midpoint="-65"/>  
+                <transition name="beta" from="h" to="h0" expr_form="sigmoid" rate="1" scale="-10" midpoint="-35"/>    
+            </gate>
+            
+        </current_voltage_relation>
+        
+        
+    </channel_type>
+    <channel_type name="KConductance" xmlns="http://morphml.org/channelml/schema">
+        
+        <status value="stable">
+            <meta:comment>Equations adapted from HH paper for modern convention of external potential being zero</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+        
+        <meta:notes>Simple example of K conductance in squid giant axon. Based on channel from Hodgkin and Huxley 1952</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>A. L. Hodgkin and A. F. Huxley, A quantitative description of membrane current and its application
+            to conduction and excitation in nerve, J. Physiol., vol. 117, pp. 500-544, 1952.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=12991237</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>K channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="36" default_erev="-77.0">
+            
+            <gate name="n" instances="4">
+                <closed_state id="n0"/>
+                <open_state id="n"/>
+                     
+                <transition name="alpha" from="n0" to="n" expr_form="exp_linear" rate="0.1" scale="10" midpoint="-55"/>
+                <transition name="beta" from="n" to="n0" expr_form="exponential" rate="0.125" scale="-80" midpoint="-65"/>
+                    
+            </gate>
+        </current_voltage_relation>
+        
+    </channel_type>
+</channels>
+
+<populations xmlns="http://morphml.org/networkml/schema">
+    <population name="SampleCellGroup" cell_type="SampleCell">
+        <meta:properties>
+            <meta:property tag="color" value="0.99609375 0.0 0.0"/>
+        </meta:properties>
+        <instances size="1">
+            <instance id="0">
+                <location x="40.383804" y="30.690071" z="46.266376"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+    <!--There are no synaptic connections present in the network-->
+
+
+<inputs units="SI Units" xmlns="http://morphml.org/networkml/schema">
+    <input name="SampleIClamp">
+        <pulse_input delay="0.02" duration="0.06" amplitude="2.0E-10"/>
+        <target population="SampleCellGroup">
+            <sites size="1">
+            <site cell_id="0" segment_id="0" fraction_along="0.5"/>
+        </sites>
+        </target>
+    </input>
+</inputs>
+
+</neuroml>

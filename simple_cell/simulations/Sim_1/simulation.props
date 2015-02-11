@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>This is a summary of the simulation parameters to assist reviewing of saved simulations in neuroConstruct.</comment>
+<entry key="Unit system">GENESIS SI Units</entry>
+<entry key="Duration">100.0</entry>
+<entry key="Simulator">LEMS</entry>
+<entry key="dt">0.02</entry>
+<entry key="Simulation temp">6.3</entry>
+<entry key="Stimulation: 0">IClamp: [del: 20, dur: 60, amp: 0.2, repeats: false] on SampleCellGroup</entry>
+<entry key="neuroConstruct version">1.7.1</entry>
+<entry key="Global Ra">300.0</entry>
+<entry key="Parallel configuration">Local machine, serial mode with 1 host, 1 processor
+</entry>
+<entry key="Net connections"/>
+<entry key="neuroConstruct random seed">-1554439544</entry>
+<entry key="Sim Config">Default Simulation Configuration (SampleCellGroup, SampleIClamp, SamplePlot)</entry>
+<entry key="Morph summary SampleCell">Segs:6_Secs:6_IntDivs:6</entry>
+<entry key="Global Rm">3.33333344E8</entry>
+<entry key="Populations">SampleCellGroup (SampleCell): 1</entry>
+<entry key="Cell Mechanisms on SampleCell">[KConductance (3.6E-7) on: [all], LeakConductance (3.0E-9) on: [all], NaConductance (1.2E-6) on: [all], DoubExpSyn on: [all]]</entry>
+<entry key="Global Cm">1.0E-8</entry>
+</properties>
