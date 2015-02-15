@@ -19,8 +19,13 @@ import moose.neuroml as nml
 import numpy as np
 import random
 import pylab
+from collections import defaultdict
+
+totalSynapse = 0
+totalCells = 0
 
 def make_synapse(pre, post):
+    global totalSynapse
     synchan = moose.SynChan('{}/synchan'.format(post.path))
     synchan.Gbar = 20e-12
     synchan.tau1 = 2e-3
@@ -29,58 +34,58 @@ def make_synapse(pre, post):
     #: Create SynHandler to handle spike event input and set the
     #: activation input of synchan
     synhandler = moose.SimpleSynHandler('%s/synhandler' % post.path)
-    synhandler.synapse.num = 1000
+    synhandler.synapse.num += 1
     synhandler.synapse[0].delay = 5e-3
     synhandler.connect('activationOut', synchan, 'activation')
-
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
-    spikegen.threshold = -45e-3
+    spikegen.threshold = -5e-3
     pre.connect('VmOut', spikegen, 'Vm')
     for syn in synhandler.synapse:
         spikegen.connect('spikeOut', syn, 'addSpike')
+        totalSynapse += 1
+
     return {'presynaptic': pre, 'postsynaptic': post, 'spikegen':
             spikegen, 'synchan': synchan, 'synhandler': synhandler}
 
-def createRandomSynapse(popA, popB, numsynapse, excitory):
-    compartments = popA + popB
-    if not popB:
-        popB = popA
-    choices = np.random.choice([0,1], numsynapse, excitory)
-    assert len(compartments) >= 2, compartments
+def createRandomSynapse(cells, numsynapse, excitatory):
+    print("[INFO] Creating %s synapse (%s excitatory)" % (numsynapse, excitatory))
+    choices = np.random.choice([0,1], numsynapse, excitatory)
+    cellPaths = cells.keys()
+    assert len(cells) >= 2, compartments
     for i, c in enumerate(choices):
-        # Select two compartments at random and make a synapse.
+        # Select two cells at random 
+        cell1, cell2 = random.sample(cellPaths, 2)
+        # select a compartment at random from each cell.
+        comp1 = random.choice(cells[cell1])
+        comp2 = random.choice(cells[cell2])
         if c == 0:
             mu.info("Creating an excitatory synapse")
-            c1 = random.choice(popA)
-            c2 = random.choice(popB)
-            while(c1 == c2): c2 = random.choice(popB)
-            make_synapse(c1, c2)
+            make_synapse(comp1, comp2)
         if c == 1:
             mu.info("Creating an inhib synapse")
-            c1 = random.choice(popA)
-            c2 = random.choice(popB)
-            while(c1 == c2): c2 = random.choice(popB)
-            make_synapse(c1, c2)
+            make_synapse(comp1, comp2)
     
-def loadCellModel(path):
+def loadCellModel(path, numCells):
     nmlObj = nml.NeuroML()
     projDict, popDict = nmlObj.readNeuroMLFromFile(path)
     network = moose.Neutral('/network')
     network = moose.Neutral('/network')
     netList = []
-    for i in range(2):
+    for i in range(numCells):
         cellPath = moose.Neutral('{}/copy{}'.format(network.path, i))
-        a = moose.copy(moose.Neutral('/library/SampleCell/'), cellPath, 'SimpleCell')
+        a = moose.copy(moose.Neutral('/library/SampleCell/'), cellPath)
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    #createRandomSynapse(comps, (), 2, 0.3)
-    c1 = comps[0]
-    c2 = comps[-1]
-    make_synapse(c1, c2)
-    mu.writeGraphviz('network.dot')
+    return comps 
+
+def makeSynapses(comps, num_synapses, probExcitatory):
+    cells = defaultdict(list)
+    for c in comps:
+        parent = '/'.join(c.path.split('/')[:-1])
+        cells[parent].append(c)
+    createRandomSynapse(cells, num_synapses, probExcitatory)
     mu.verify()
-    return comps
 
 def setSimulation():
     c1 = moose.element('/network/copy0/SimpleCell/Soma_0')
@@ -101,15 +106,48 @@ def setRecorder(elems):
         tables.append(table)
     return tables
 
-def main():
-    comps = loadCellModel('../simple_cell/generatedNeuroML/L3Net_11-Feb-15_16-44-37.nml1')
-    in1 = setSimulation()
-    tables = setRecorder(comps)
+def main(args):
+    global totalSynapse
+    modelFile = args.cell_model
+    comps = loadCellModel(modelFile, args.num_cells)
+    makeSynapses(comps, args.num_synapse, args.excitatory)
+    mu.writeGraphviz('network.dot')
+    print("++ Total %s synapses created" % totalSynapse)
+    #in1 = setSimulation()
+    #tables = setRecorder(comps)
     moose.reinit()
-    moose.start(1)
-    for table in tables:
-        pylab.plot(table.vector)
-    pylab.show()
+    #moose.start(1)
+    #for table in tables:
+        #pylab.plot(table.vector)
+    #pylab.show()
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    # Argument parser.
+    description = '''A random network in moose'''
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('--cell_model', '-f', metavar='cell_model'
+            , required = True
+            , type = str
+            , help = 'Path of single cell model in NML'
+            )
+    parser.add_argument('--num_cells', '-n'
+        , required = True
+        , type = int
+        , help = 'No of cells in network'
+        )
+    parser.add_argument('--num_synapse', '-s'
+        , required = True
+        , type = int
+        , help = 'No of synapse in network'
+        )
+    parser.add_argument('--excitatory', '-pe'
+        , required = True
+        , default = 0.3
+        , type = float
+        , help = 'Fraction of excitatory synapses.'
+        )
+    class Args: pass 
+    args = Args()
+    parser.parse_args(namespace=args)
+    main(args)
