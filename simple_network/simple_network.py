@@ -57,9 +57,11 @@ def createRandomSynapse(cells, numsynapse, excitatory):
     for i, c in enumerate(choices):
         # Select two cells at random 
         cell1, cell2 = random.sample(cellPaths, 2)
+        assert cell1 != cell2
         # select a compartment at random from each cell.
         comp1 = random.choice(cells[cell1])
         comp2 = random.choice(cells[cell2])
+        assert comp1.path != comp2.path
         if c == 0:
             mu.info("Creating an excitatory synapse")
             make_synapse(comp1, comp2)
@@ -88,7 +90,7 @@ def makeSynapses(comps, num_synapses, probExcitatory):
     mu.verify()
 
 def setSimulation():
-    c1 = moose.element('/network/copy0/SimpleCell/Soma_0')
+    c1 = moose.element('/network/copy0/SampleCell/Soma_0')
     pulse = moose.PulseGen('/network/pulse')
     pulse.level[0] = 1e-9
     pulse.delay[0] = 0.1
@@ -112,14 +114,15 @@ def main(args):
     comps = loadCellModel(modelFile, args.num_cells)
     makeSynapses(comps, args.num_synapse, args.excitatory)
     mu.writeGraphviz('network.dot')
+    synchans = moose.wildcardFind('/##[TYPE=SimpleSynHandler]')
     print("++ Total %s synapses created" % totalSynapse)
-    #in1 = setSimulation()
-    #tables = setRecorder(comps)
+    in1 = setSimulation()
+    tables = setRecorder(comps)
     moose.reinit()
-    #moose.start(1)
-    #for table in tables:
-        #pylab.plot(table.vector)
-    #pylab.show()
+    moose.start(1)
+    for table in tables:
+        pylab.plot(table.vector)
+    pylab.show()
 
 if __name__ == '__main__':
     import argparse
