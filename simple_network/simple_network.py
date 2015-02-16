@@ -28,6 +28,17 @@ simulationTime = 0.0
 cells = defaultdict(list)
 tables = {}
 
+inputTables = {}
+somaTables = {}
+
+outputTables = {}
+vmTables = {}
+
+def plot(vec):
+    clock = moose.Clock('/clock')
+    pylab.plot(np.linspace(0, clock.currentTime, len(vec)), vec)
+    pylab.xlabel("Time (sec)")
+
 def make_synapse(pre, post, excitatory = True):
     global totalSynapse
     synchan = moose.SynChan('{}/synchan'.format(post.path))
@@ -95,7 +106,7 @@ def loadCellModel(path, numCells):
         cells[parentPath].append(c)
     return cells 
 
-def addPulseGen(c1, bursting = True, **kwargs):
+def addPulseGen(c1, bursting, **kwargs):
     global simulationTime
     mu.info("Adding a pulse-gen to %s" % c1.path)
     pulse = moose.PulseGen('%s/pulse' % c1.path)
@@ -104,11 +115,14 @@ def addPulseGen(c1, bursting = True, **kwargs):
     if bursting:
         pulse.width[0] = simulationTime
     else:
-        pulse.delay[0] = 1000
-        pulse.width[0] = 10e-3
+        pulse.delay[0] = 10e-3
+        pulse.width[0] = 5e-3
     pulse.connect('output', c1, 'injectMsg')
     table = moose.Table('%s/tab' % (pulse.path))
     moose.connect(table, 'requestOut', pulse, 'getOutputValue')
+
+    inputTables[c1.path] = table
+
     tables[c1.path] = table
 
 def setRecorder(elems):
@@ -166,8 +180,14 @@ def main(args):
     moose.start(simulationTime)
     
     mu.info("Total plots %s" % len(tables))
+
+    for table in inputTables:
+        plot(inputTables[table].vector)
+    pylab.title("Total %s firing neurons" % len(inputTables))
+
+    pylab.figure()
     for table in tables:
-        pylab.plot(tables[table].vector)
+        plot(tables[table].vector)
     pylab.show()
     
     
