@@ -56,8 +56,8 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
             xvec = np.linspace(0, clock.currentTime, len(yvec))
             xline = ','.join([str(x) for x in xvec])
             yline = ','.join([str(y) for y in yvec])
-            f.write('"%s:x",%s' % (k, xline))
-            f.write('"%s:y",%s' % (k, yline))
+            f.write('"%s:x",%s\n' % (k, xline))
+            f.write('"%s:y",%s\n' % (k, yline))
     mu.info(" .. Done writing data to moose-data file")
 
     if not plot:
