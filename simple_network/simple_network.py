@@ -19,10 +19,14 @@ import moose.neuroml as nml
 import numpy as np
 import random
 import pylab
+import sys
 from collections import defaultdict
 
 totalSynapse = 0
 totalCells = 0
+simulationTime = 0.0
+cells = defaultdict(list)
+tables = {}
 
 def make_synapse(pre, post, excitatory = True):
     global totalSynapse
@@ -54,9 +58,10 @@ def make_synapse(pre, post, excitatory = True):
     return {'presynaptic': pre, 'postsynaptic': post, 'spikegen':
             spikegen, 'synchan': synchan, 'synhandler': synhandler}
 
-def createRandomSynapse(cells, numsynapse, excitatory):
+def createRandomSynapse(numsynapse, excitatory):
     print("[INFO] Creating %s synapse (%s excitatory)" % (numsynapse, excitatory))
-    choices = np.random.choice([0,1], numsynapse, excitatory)
+    global cells
+    choices = np.random.choice([0,1], numsynapse, p=[excitatory, 1-excitatory])
     cellPaths = cells.keys()
     assert len(cells) >= 2, "Need at least two cells for making synapse"
     for i, c in enumerate(choices):
@@ -75,6 +80,7 @@ def createRandomSynapse(cells, numsynapse, excitatory):
             make_synapse(comp1, comp2, False)
     
 def loadCellModel(path, numCells):
+    global cells
     nmlObj = nml.NeuroML()
     projDict, popDict = nmlObj.readNeuroMLFromFile(path)
     network = moose.Neutral('/network')
@@ -84,50 +90,87 @@ def loadCellModel(path, numCells):
         cellPath = moose.Neutral('{}/copy{}'.format(network.path, i))
         a = moose.copy(moose.Neutral('/library/SampleCell/'), cellPath)
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    return comps 
-
-def makeSynapses(comps, num_synapses, probExcitatory):
-    cells = defaultdict(list)
     for c in comps:
-        parent = '/'.join(c.path.split('/')[:-1])
-        cells[parent].append(c)
-    createRandomSynapse(cells, num_synapses, probExcitatory)
-    mu.verify()
+        parentPath = '/'.join(c.path.split('/')[:-1])
+        cells[parentPath].append(c)
+    return cells 
 
-def setSimulation():
-    c1 = moose.element('/network/copy0/SampleCell/Soma_0')
-    pulse = moose.PulseGen('/network/pulse')
+def addPulseGen(c1, bursting = True, **kwargs):
+    global simulationTime
+    mu.info("Adding a pulse-gen to %s" % c1.path)
+    pulse = moose.PulseGen('%s/pulse' % c1.path)
     pulse.level[0] = 1e-9
-    pulse.delay[0] = 0.1
-    pulse.width[0] = 40e-3
+    pulse.delay[0] = 0
+    if bursting:
+        pulse.width[0] = simulationTime
+    else:
+        pulse.delay[0] = 1000
+        pulse.width[0] = 10e-3
     pulse.connect('output', c1, 'injectMsg')
     table = moose.Table('%s/tab' % (pulse.path))
     moose.connect(table, 'requestOut', pulse, 'getOutputValue')
-    return table
+    tables[c1.path] = table
 
 def setRecorder(elems):
-    tables = []
     for elem in elems:
         table = moose.Table('{}/table'.format(elem.path))
         table.connect('requestOut', elem, 'getVm')
-        tables.append(table)
+        tables[elem.path] = table
     return tables
+
+def getSoma(cell):
+    comp = moose.wildcardFind('{}/#[TYPE=Compartment]'.format(cell))
+    for c in comp:
+        if "Soma" in c.path:
+            return c
+    return None
+
+
+def setupStimulus(stimulatedNeurons, burstingNeurons):
+    print("[INFO] Out of %s neurons, %s (fraction) are bursting" % (stimulatedNeurons,
+        burstingNeurons))
+    global cells
+    choices = np.random.choice([0,1], stimulatedNeurons,
+            p=[burstingNeurons,1.0-burstingNeurons]
+            )
+    for c in choices:
+        cell = random.choice(cells.keys())
+        soma = getSoma(cell)
+        if c == 0:
+            mu.info("A bursting neuron")
+            addPulseGen(soma, bursting=True)
+        else:
+            mu.info("A single spiking neuron")
+            addPulseGen(soma, bursting=False)
 
 def main(args):
     global totalSynapse
+    global simulationTime
+    simulationTime = args.sim_time
+
     modelFile = args.cell_model
-    comps = loadCellModel(modelFile, args.num_cells)
-    makeSynapses(comps, args.num_synapse, args.excitatory)
-    mu.writeGraphviz('network.dot')
+    loadCellModel(modelFile, args.num_cells)
+    createRandomSynapse(args.num_synapse, args.excitatory)
+
+    stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
+    setupStimulus(stimulatedNeurons, args.burst_mode)
+
+    comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
+    setRecorder(comps)
+
+
+    #mu.writeGraphviz('network.dot')
     synchans = moose.wildcardFind('/##[TYPE=SimpleSynHandler]')
     print("++ Total %s synapses created" % totalSynapse)
-    in1 = setSimulation()
-    tables = setRecorder(comps)
     moose.reinit()
-    moose.start(1)
+    moose.start(simulationTime)
+    
+    mu.info("Total plots %s" % len(tables))
     for table in tables:
-        pylab.plot(table.vector)
+        pylab.plot(tables[table].vector)
     pylab.show()
+    
+    
 
 if __name__ == '__main__':
     import argparse
@@ -154,6 +197,21 @@ if __name__ == '__main__':
         , default = 0.3
         , type = float
         , help = 'Fraction of excitatory synapses.'
+        )
+    parser.add_argument('--stimulated_neurons', '-sn'
+        , required = True
+        , type = float
+        , help = 'Fraction of cells stimulated by current pulse.'
+        )
+    parser.add_argument('--burst_mode', '-bm'
+        , required = True
+        , type = float
+        , help = 'Fraction of stimulated neurons firing in burst mode.'
+        )
+    parser.add_argument('--sim_time', '-st'
+        , required = True
+        , type = float
+        , help = 'Simulation time in seconds.'
         )
     class Args: pass 
     args = Args()
