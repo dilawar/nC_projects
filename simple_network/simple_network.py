@@ -24,7 +24,7 @@ from collections import defaultdict
 totalSynapse = 0
 totalCells = 0
 
-def make_synapse(pre, post):
+def make_synapse(pre, post, excitatory = True):
     global totalSynapse
     synchan = moose.SynChan('{}/synchan'.format(post.path))
     synchan.Gbar = 20e-12
@@ -35,17 +35,22 @@ def make_synapse(pre, post):
     #: activation input of synchan
     synhandler = moose.SimpleSynHandler('%s/synhandler' % post.path)
     synhandler.synapse.num += 1
-    synhandler.synapse[0].delay = 5e-3
+    for i in range(synhandler.synapse.num):
+        synhandler.synapse[i].delay = 5e-3
+        if excitatory:
+            synhandler.synapse[i].weight = 5e-3
+        else:
+            synhandler.synapse[i].weight = -20e-3
+
     synhandler.connect('activationOut', synchan, 'activation')
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
-    spikegen.threshold = -5e-3
+    spikegen.threshold = -1e-3
     pre.connect('VmOut', spikegen, 'Vm')
     for syn in synhandler.synapse:
         spikegen.connect('spikeOut', syn, 'addSpike')
         totalSynapse += 1
-
     return {'presynaptic': pre, 'postsynaptic': post, 'spikegen':
             spikegen, 'synchan': synchan, 'synhandler': synhandler}
 
@@ -53,7 +58,7 @@ def createRandomSynapse(cells, numsynapse, excitatory):
     print("[INFO] Creating %s synapse (%s excitatory)" % (numsynapse, excitatory))
     choices = np.random.choice([0,1], numsynapse, excitatory)
     cellPaths = cells.keys()
-    assert len(cells) >= 2, compartments
+    assert len(cells) >= 2, "Need at least two cells for making synapse"
     for i, c in enumerate(choices):
         # Select two cells at random 
         cell1, cell2 = random.sample(cellPaths, 2)
@@ -64,10 +69,10 @@ def createRandomSynapse(cells, numsynapse, excitatory):
         assert comp1.path != comp2.path
         if c == 0:
             mu.info("Creating an excitatory synapse")
-            make_synapse(comp1, comp2)
+            make_synapse(comp1, comp2, True)
         if c == 1:
             mu.info("Creating an inhib synapse")
-            make_synapse(comp1, comp2)
+            make_synapse(comp1, comp2, False)
     
 def loadCellModel(path, numCells):
     nmlObj = nml.NeuroML()
