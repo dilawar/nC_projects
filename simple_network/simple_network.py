@@ -34,9 +34,51 @@ somaTables = {}
 outputTables = {}
 vmTables = {}
 
-def plot(vec):
+import os, datetime
+now = datetime.datetime.now()
+datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
+if not os.path.isdir(datadir): os.makedirs(datadir)
+
+def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
+    """Make sure that all vectors in dictionary are of same length """
+
+    assert type(dataDict) == dict, "Got %s" % type(dataDict)
+
     clock = moose.Clock('/clock')
-    pylab.plot(np.linspace(0, clock.currentTime, len(vec)), vec)
+
+    global datadir
+    dataFile = "%s.moose"%os.path.join(datadir, name.translate(None, '[]/'))
+
+    mu.info("Writing data to %s" % dataFile)
+    with open(dataFile, 'w') as f:
+        for k in dataDict:
+            yvec = dataDict[k].vector
+            xvec = np.linspace(0, clock.currentTime, len(yvec))
+            xline = ','.join([str(x) for x in xvec])
+            yline = ','.join([str(y) for y in yvec])
+            f.write('"%s:x",%s' % (k, xline))
+            f.write('"%s:y",%s' % (k, yline))
+    mu.info(" .. Done writing data to moose-data file")
+
+    if not plot:
+        return 
+
+    for i, k in enumerate(dataDict):
+        mu.info("+ Plotting for %s" % k)
+        if not subplot: 
+            pylab.figure()
+            yvec = dataDict[k].vector
+            pylab.plot(xvec, yvec, label=str(k))
+            pylab.legend(loc='best', framealpha=0.4)
+        else:
+            for i, k in enumerate(dataDict):
+                pylab.subplot(len(dataDict), 1, i)
+                yvec = dataDict[k].vector
+                pylab.plot(xvec, yvec, label=str(k))
+                pylab.legend(loc='best', framealpha=0.4)
+                
+    pylab.title(kwargs.get('title', ''))
+    pylab.ylabel(kwargs.get('ylabel', ''))
     pylab.xlabel("Time (sec)")
 
 def make_synapse(pre, post, excitatory = True):
@@ -98,7 +140,7 @@ def loadCellModel(path, numCells):
     network = moose.Neutral('/network')
     netList = []
     for i in range(numCells):
-        cellPath = moose.Neutral('{}/copy{}'.format(network.path, i))
+        cellPath = moose.Neutral('{}/cell{}'.format(network.path, i))
         a = moose.copy(moose.Neutral('/library/SampleCell/'), cellPath)
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     for c in comps:
@@ -117,12 +159,11 @@ def addPulseGen(c1, bursting, **kwargs):
     else:
         pulse.delay[0] = 10e-3
         pulse.width[0] = 5e-3
+
     pulse.connect('output', c1, 'injectMsg')
     table = moose.Table('%s/tab' % (pulse.path))
     moose.connect(table, 'requestOut', pulse, 'getOutputValue')
-
     inputTables[c1.path] = table
-
     tables[c1.path] = table
 
 def setRecorder(elems):
@@ -160,11 +201,13 @@ def setupStimulus(stimulatedNeurons, burstingNeurons):
 def main(args):
     global totalSynapse
     global simulationTime
-    simulationTime = args.sim_time
+    global inputTables
+    global tables 
+    simulationTime = args.simulation_time
 
-    modelFile = args.cell_model
+    modelFile = args.model_file
     loadCellModel(modelFile, args.num_cells)
-    createRandomSynapse(args.num_synapse, args.excitatory)
+    createRandomSynapse(args.num_synapse, args.excitatory_neurons)
 
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
@@ -172,47 +215,39 @@ def main(args):
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps)
 
-
     #mu.writeGraphviz('network.dot')
     synchans = moose.wildcardFind('/##[TYPE=SimpleSynHandler]')
     print("++ Total %s synapses created" % totalSynapse)
     moose.reinit()
+    mu.verify()
+    mu.info("Simulating for %s seconds" % simulationTime)
     moose.start(simulationTime)
     
     mu.info("Total plots %s" % len(tables))
-
-    for table in inputTables:
-        plot(inputTables[table].vector)
-    pylab.title("Total %s firing neurons" % len(inputTables))
-
-    pylab.figure()
-    for table in tables:
-        plot(tables[table].vector)
-    pylab.show()
-    
-    
+    saveRecords(inputTables, 'input_stim', plot=False)
+    saveRecords(tables, 'compartments_vm', plot=False)
 
 if __name__ == '__main__':
     import argparse
     # Argument parser.
     description = '''A random network in moose'''
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('--cell_model', '-f', metavar='cell_model'
+    parser.add_argument('--model_file', '-f', metavar='model_file'
             , required = True
             , type = str
             , help = 'Path of single cell model in NML'
             )
-    parser.add_argument('--num_cells', '-n'
+    parser.add_argument('--num_cells', '-nc'
         , required = True
         , type = int
         , help = 'No of cells in network'
         )
-    parser.add_argument('--num_synapse', '-s'
+    parser.add_argument('--num_synapse', '-ns'
         , required = True
         , type = int
         , help = 'No of synapse in network'
         )
-    parser.add_argument('--excitatory', '-pe'
+    parser.add_argument('--excitatory_neurons', '-en'
         , required = True
         , default = 0.3
         , type = float
@@ -221,14 +256,14 @@ if __name__ == '__main__':
     parser.add_argument('--stimulated_neurons', '-sn'
         , required = True
         , type = float
-        , help = 'Fraction of cells stimulated by current pulse.'
+        , help = 'Fraction of cells spiking by external input.'
         )
     parser.add_argument('--burst_mode', '-bm'
         , required = True
         , type = float
         , help = 'Fraction of stimulated neurons firing in burst mode.'
         )
-    parser.add_argument('--sim_time', '-st'
+    parser.add_argument('--simulation_time', '-st'
         , required = True
         , type = float
         , help = 'Simulation time in seconds.'
