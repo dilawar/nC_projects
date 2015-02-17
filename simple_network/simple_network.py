@@ -43,7 +43,6 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
     """Make sure that all vectors in dictionary are of same length """
 
     assert type(dataDict) == dict, "Got %s" % type(dataDict)
-
     clock = moose.Clock('/clock')
     filters = kwargs.get('filter', [])
     legend = kwargs.get('legend', False)
@@ -65,10 +64,12 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
     if not plot:
         return 
 
+    pylab.figure()
     averageData = []
     for i, k in enumerate(dataDict):
         mu.info("+ Plotting for %s" % k)
         plotThis = False
+        if not filters: plotThis = True
         for accept in filters:
             if accept in k: 
                 plotThis = True
@@ -93,8 +94,10 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
     pylab.title(kwargs.get('title', ''))
     pylab.ylabel(kwargs.get('ylabel', ''))
     pylab.xlabel("Time (sec)")
-    pylab.figure()
-    pylab.plot(xvec, np.mean(averageData, axis=0))
+    average = kwargs.get('average', False)
+    if average:
+        pylab.figure()
+        pylab.plot(xvec, np.mean(averageData, axis=0))
 
 def make_synapse(pre, post, excitatory = True):
     global totalSynapse
@@ -176,14 +179,15 @@ def loadCellModel(path, numCells):
 
 def addPulseGen(c1, bursting, **kwargs):
     global simulationTime
+    global inputTables, tables
     mu.info("Adding a pulse-gen to %s" % c1.path)
     pulse = moose.PulseGen('%s/pulse' % c1.path)
     pulse.level[0] = 1e-9
-    pulse.delay[0] = 0
     if bursting:
-        pulse.width[0] = simulationTime
+        pulse.delay[0] = 3e-1
+        pulse.width[0] = 2e-1
     else:
-        pulse.delay[0] = 10e-3
+        pulse.delay[0] = 100e-3
         pulse.width[0] = 5e-3
 
     pulse.connect('output', c1, 'injectMsg')
@@ -193,11 +197,12 @@ def addPulseGen(c1, bursting, **kwargs):
     tables[c1.path] = table
 
 def setRecorder(elems):
+    global outputTables, tables
     for elem in elems:
         table = moose.Table('{}/table'.format(elem.path))
         table.connect('requestOut', elem, 'getVm')
         tables[elem.path] = table
-    return tables
+        outputTables[elem.path] = table
 
 def getSoma(cell):
     comp = moose.wildcardFind('{}/#[TYPE=Compartment]'.format(cell))
@@ -245,13 +250,18 @@ def main(args):
     synchans = moose.wildcardFind('/##[TYPE=SimpleSynHandler]')
     print("++ Total %s synapses created" % totalSynapse)
     moose.reinit()
-    mu.verify()
     mu.info("Simulating for %s seconds" % simulationTime)
     moose.start(simulationTime)
     
     mu.info("Total plots %s" % len(tables))
-    saveRecords(inputTables, 'input_stim', plot=False)
-    saveRecords(tables, 'compartments_vm', plot=True, subplot=False, filter=["Soma", "Axon"])
+    saveRecords(inputTables, 'input_stim', plot=False, subplot=False
+            , average=False
+            , title = 'Input stimulus'
+            )
+    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
+            , average = True
+            , filter=["Soma", "Axon"]
+            )
     pylab.show()
 
 if __name__ == '__main__':
@@ -276,7 +286,6 @@ if __name__ == '__main__':
         )
     parser.add_argument('--excitatory_neurons', '-en'
         , required = True
-        , default = 0.3
         , type = float
         , help = 'Fraction of excitatory synapses.'
         )

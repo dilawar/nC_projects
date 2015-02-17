@@ -3,7 +3,7 @@ set -x
 rm -f network.dot
 python ./simple_network.py -f \
     ../simple_cell/generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
-    -nc 1 -ns 0 -en 1 -sn 1.0 -bm 0 -st 1
+    -nc 100 -ns 5000 -en 0.3 -sn 0.3 -bm 0.3 -st 1
 if [ -f network.dot ]; then
     echo "Not dumping the topology"
     neato -Teps ./network.dot > ./network.eps
