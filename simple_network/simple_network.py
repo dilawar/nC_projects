@@ -45,6 +45,8 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
     assert type(dataDict) == dict, "Got %s" % type(dataDict)
 
     clock = moose.Clock('/clock')
+    filters = kwargs.get('filter', [])
+    legend = kwargs.get('legend', False)
 
     global datadir
     dataFile = "%s.moose"%os.path.join(datadir, name.translate(None, '[]/'))
@@ -63,23 +65,36 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
     if not plot:
         return 
 
+    averageData = []
     for i, k in enumerate(dataDict):
         mu.info("+ Plotting for %s" % k)
+        plotThis = False
+        for accept in filters:
+            if accept in k: 
+                plotThis = True
+                break
+                
         if not subplot: 
-            pylab.figure()
-            yvec = dataDict[k].vector
-            pylab.plot(xvec, yvec, label=str(k))
-            pylab.legend(loc='best', framealpha=0.4)
-        else:
-            for i, k in enumerate(dataDict):
-                pylab.subplot(len(dataDict), 1, i)
+            if plotThis:
                 yvec = dataDict[k].vector
                 pylab.plot(xvec, yvec, label=str(k))
-                pylab.legend(loc='best', framealpha=0.4)
-                
+                averageData.append(yvec)
+                if legend:
+                    pylab.legend(loc='best', framealpha=0.4)
+        else:
+            if plotThis:
+                pylab.subplot(len(dataDict), 1, i)
+                yvec = dataDict[k].vector
+                averageData.append(yvec)
+                pylab.plot(xvec, yvec, label=str(k))
+                if legend:
+                    pylab.legend(loc='best', framealpha=0.4)
+
     pylab.title(kwargs.get('title', ''))
     pylab.ylabel(kwargs.get('ylabel', ''))
     pylab.xlabel("Time (sec)")
+    pylab.figure()
+    pylab.plot(xvec, np.mean(averageData, axis=0))
 
 def make_synapse(pre, post, excitatory = True):
     global totalSynapse
@@ -225,7 +240,8 @@ def main(args):
     
     mu.info("Total plots %s" % len(tables))
     saveRecords(inputTables, 'input_stim', plot=False)
-    saveRecords(tables, 'compartments_vm', plot=False)
+    saveRecords(tables, 'compartments_vm', plot=True, subplot=False, filter=["Soma", "Axon"])
+    pylab.show()
 
 if __name__ == '__main__':
     import argparse
