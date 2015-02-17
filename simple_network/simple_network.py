@@ -78,6 +78,7 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
         if not subplot: 
             if plotThis:
                 yvec = dataDict[k].vector
+                xvec = np.linspace(0, clock.currentTime, len(yvec))
                 pylab.plot(xvec, yvec, label=str(k))
                 averageData.append(yvec)
                 if legend:
@@ -86,6 +87,7 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
             if plotThis:
                 pylab.subplot(len(dataDict), 1, i)
                 yvec = dataDict[k].vector
+                xvec = np.linspace(0, clock.currentTime, len(yvec))
                 averageData.append(yvec)
                 pylab.plot(xvec, yvec, label=str(k))
                 if legend:
@@ -242,19 +244,15 @@ def main(args):
 
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
-
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps)
-
-    #mu.writeGraphviz('network.dot')
-    synchans = moose.wildcardFind('/##[TYPE=SimpleSynHandler]')
-    print("++ Total %s synapses created" % totalSynapse)
     moose.reinit()
     mu.info("Simulating for %s seconds" % simulationTime)
     moose.start(simulationTime)
     
     mu.info("Total plots %s" % len(tables))
-    saveRecords(inputTables, 'input_stim', plot=False, subplot=False
+    saveRecords(inputTables, 'input_stim'
+            , plot=True, subplot=False
             , average=False
             , title = 'Input stimulus'
             )
