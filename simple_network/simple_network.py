@@ -131,7 +131,9 @@ def createRandomSynapse(numsynapse, excitatory):
     global cells
     choices = np.random.choice([0,1], numsynapse, p=[excitatory, 1-excitatory])
     cellPaths = cells.keys()
-    assert len(cells) >= 2, "Need at least two cells for making synapse"
+    if len(cells) < 2:
+        print("Need at least two cells to make a synapse. Not making synapse")
+        return 
     for i, c in enumerate(choices):
         # Select two cells at random 
         cell1, cell2 = random.sample(cellPaths, 2)
@@ -156,7 +158,16 @@ def loadCellModel(path, numCells):
     netList = []
     for i in range(numCells):
         cellPath = moose.Neutral('{}/cell{}'.format(network.path, i))
-        a = moose.copy(moose.Neutral('/library/SampleCell/'), cellPath)
+        copyFrom = '/library/SampleCell'
+        try:
+            a = moose.copy(moose.Neutral(copyFrom), cellPath)
+        except: 
+            print("Could not copy %s to %s" % (copyFrom, cellPath))
+            print("Available paths are: \n")
+            for p in moose.wildcardFind('/library/##'):
+                print p.path
+            sys.exit(0)
+
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     for c in comps:
         parentPath = '/'.join(c.path.split('/')[:-1])
