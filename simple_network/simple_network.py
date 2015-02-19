@@ -261,8 +261,8 @@ def main(args):
     setupStimulus(stimulatedNeurons, args.burst_mode)
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps)
-    #simulate(simulationTime)
-    mu.writeNetwork()
+    simulate(simulationTime)
+    #mu.writeNetwork()
 
 if __name__ == '__main__':
     import argparse
