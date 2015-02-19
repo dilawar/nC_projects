@@ -35,6 +35,8 @@ somaTables = {}
 outputTables = {}
 vmTables = {}
 
+args = None
+
 import os, datetime
 now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
@@ -104,9 +106,6 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
 def make_synapse(pre, post, excitatory = True):
     global totalSynapse
     synchan = moose.SynChan('{}/synchan'.format(post.path))
-    synchan.Gbar = 20e-12
-    synchan.tau1 = 2e-3
-    synchan.tau2 = 2e-3
     synchan.connect('channel', post, 'channel')
     #: Create SynHandler to handle spike event input and set the
     #: activation input of synchan
@@ -115,15 +114,20 @@ def make_synapse(pre, post, excitatory = True):
     for i in range(synhandler.synapse.num):
         synhandler.synapse[i].delay = 5e-3
         if excitatory:
-            synhandler.synapse[i].weight = 5e-3
+            synhandler.synapse[i].weight = float(args.synaptic_weights[0])
         else:
-            synhandler.synapse[i].weight = -20e-3
+            synhandler.synapse[i].weight = float(args.synaptic_weights[1])
 
     synhandler.connect('activationOut', synchan, 'activation')
+
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
-    spikegen.threshold = -1e-3
+    if excitatory:
+        spikegen.threshold = float(args.synaptic_threshold[0])
+    else:
+        spikegen.threshold = float(args.synaptic_threshold[1])
+
     pre.connect('VmOut', spikegen, 'Vm')
     for syn in synhandler.synapse:
         spikegen.connect('spikeOut', syn, 'addSpike')
@@ -247,16 +251,19 @@ def simulate(simulationTime):
             )
     pylab.show()
 
-def main(args):
+def main():
+
     global totalSynapse
     global simulationTime
     global inputTables
     global tables 
-    simulationTime = args.simulation_time
+    global args
+
+    simulationTime = args.run_time
 
     modelFile = args.model_file
     loadCellModel(modelFile, args.num_cells)
-    createRandomSynapse(args.num_synapse, args.excitatory_neurons)
+    createRandomSynapse(args.num_synapse, args.excitatory_synapses)
 
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
@@ -285,7 +292,7 @@ if __name__ == '__main__':
         , type = int
         , help = 'No of synapse in network'
         )
-    parser.add_argument('--excitatory_neurons', '-en'
+    parser.add_argument('--excitatory_synapses', '-es'
         , required = True
         , type = float
         , help = 'Fraction of excitatory synapses.'
@@ -301,12 +308,29 @@ if __name__ == '__main__':
         , type = float
         , help = 'Fraction of stimulated neurons firing in burst mode.'
         )
-    parser.add_argument('--simulation_time', '-st'
+
+    parser.add_argument('--synaptic_threshold', '-st'
+            , nargs = 2
+            , default = [-55e-3, -55e-3]
+            , required = True
+            , help = 'Synapse threshold [Excitatory, Inhibitory]'
+            )
+
+    parser.add_argument('--synaptic_weights', '-sw'
+        , nargs = 2
+        , default = [5e-3, -20e-3]
+        , required = True
+        , help = 'Synaptic weights [Excitatory, inhibitory]'
+        )
+
+    parser.add_argument('--run_time', '-rt'
         , required = True
         , type = float
         , help = 'Simulation time in seconds.'
         )
+
+    global args
     class Args: pass 
     args = Args()
     parser.parse_args(namespace=args)
-    main(args)
+    main()
