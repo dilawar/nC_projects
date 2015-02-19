@@ -162,7 +162,7 @@ def loadCellModel(path, numCells):
     netList = []
     for i in range(numCells):
         cellPath = moose.Neutral('{}/cell{}'.format(network.path, i))
-        copyFrom = '/library/SampleCell'
+        copyFrom = '/library/CA1'
         try:
             a = moose.copy(moose.Neutral(copyFrom), cellPath)
         except: 
@@ -208,7 +208,7 @@ def setRecorder(elems):
 def getSoma(cell):
     comp = moose.wildcardFind('{}/#[TYPE=Compartment]'.format(cell))
     for c in comp:
-        if "Soma" in c.path:
+        if "soma" in c.path:
             return c
     return None
 
@@ -242,7 +242,7 @@ def simulate(simulationTime):
             )
     saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
             , average = True
-            , filter=["Soma", "Axon"]
+            , filter=["soma", "axon"]
             )
     pylab.show()
 
