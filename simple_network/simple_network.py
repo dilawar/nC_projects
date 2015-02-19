@@ -60,7 +60,6 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
             f.write('"%s:x",%s\n' % (k, xline))
             f.write('"%s:y",%s\n' % (k, yline))
     mu.info(" .. Done writing data to moose-data file")
-
     if not plot:
         return 
 
@@ -231,6 +230,22 @@ def setupStimulus(stimulatedNeurons, burstingNeurons):
             mu.info("A single spiking neuron")
             addPulseGen(soma, bursting=False)
 
+def simulate(simulationTime):
+    mu.info("Simulating for %s seconds" % simulationTime)
+    moose.reinit()
+    moose.start(simulationTime)
+    mu.info("Total plots %s" % len(tables))
+    saveRecords(inputTables, 'input_stim'
+            , plot=True, subplot=False
+            , average=False
+            , title = 'Input stimulus'
+            )
+    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
+            , average = True
+            , filter=["Soma", "Axon"]
+            )
+    pylab.show()
+
 def main(args):
     global totalSynapse
     global simulationTime
@@ -246,21 +261,8 @@ def main(args):
     setupStimulus(stimulatedNeurons, args.burst_mode)
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps)
-    moose.reinit()
-    mu.info("Simulating for %s seconds" % simulationTime)
-    moose.start(simulationTime)
-    
-    mu.info("Total plots %s" % len(tables))
-    saveRecords(inputTables, 'input_stim'
-            , plot=True, subplot=False
-            , average=False
-            , title = 'Input stimulus'
-            )
-    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
-            , average = True
-            , filter=["Soma", "Axon"]
-            )
-    pylab.show()
+    #simulate(simulationTime)
+    mu.writeNetwork()
 
 if __name__ == '__main__':
     import argparse
