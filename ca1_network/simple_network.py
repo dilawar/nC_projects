@@ -296,7 +296,6 @@ if __name__ == '__main__':
         , help = 'Fraction of cells spiking by external input.'
         )
 
-    group = 
     parser.add_argument('--burst_mode', '-bm'
         , required = True
         , type = float
