@@ -270,6 +270,7 @@ def main():
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps)
     simulate(simulationTime)
+    mu.writeGraphviz('network.dot')
     #mu.writeNetwork()
 
 if __name__ == '__main__':

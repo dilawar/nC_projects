@@ -47,8 +47,9 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
 
     assert type(dataDict) == dict, "Got %s" % type(dataDict)
     clock = moose.Clock('/clock')
-    filters = kwargs.get('filter', [])
     legend = kwargs.get('legend', False)
+
+    filters = [ x.lower() for x in kwargs.get('filter', [])]
 
     global datadir
     dataFile = "%s.moose"%os.path.join(datadir, name.translate(None, '[]/'))
@@ -73,7 +74,7 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
         plotThis = False
         if not filters: plotThis = True
         for accept in filters:
-            if accept in k: 
+            if accept in k.lower(): 
                 plotThis = True
                 break
                 
@@ -213,7 +214,7 @@ def setRecorder(elems):
 def getSoma(cell):
     comp = moose.wildcardFind('{}/#[TYPE=Compartment]'.format(cell))
     for c in comp:
-        if "soma" in c.path:
+        if "soma" in c.path.lower():
             return c
     return None
 
