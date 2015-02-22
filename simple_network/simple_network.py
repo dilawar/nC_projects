@@ -135,7 +135,7 @@ def make_synapse(pre, post, excitatory = True):
     synchan = moose.SynChan('{}/synchan'.format(post.path))
     synchan.Gbar = 1e-8
     synchan.connect('channel', post, 'channel')
-    print("++ Synchan: %s, %s, %s" % (synchan.Gbar, synchan.tau1, synchan.tau2))
+    #print("++ Synchan: %s, %s, %s" % (synchan.Gbar, synchan.tau1, synchan.tau2))
 
     for i in range(synhandler.synapse.num):
         synhandler.synapse[i].delay = 5e-3
@@ -181,6 +181,8 @@ def createRandomSynapse(numsynapse, excitatory):
     
 def loadCellModel(path, numCells):
     global cells
+    global copyFrom
+
     nmlObj = nml.NeuroML()
     projDict, popDict = nmlObj.readNeuroMLFromFile(path)
     network = moose.Neutral('/network')
@@ -188,7 +190,6 @@ def loadCellModel(path, numCells):
     netList = []
     for i in range(numCells):
         cellPath = moose.Neutral('{}/cell{}'.format(network.path, i))
-        copyFrom = '/library/SampleCell'
         try:
             a = moose.copy(moose.Neutral(copyFrom), cellPath)
         except: 
@@ -289,6 +290,9 @@ def main():
     global inputTables
     global tables 
     global args
+    global copyFrom
+
+    copyFrom = '/library/SampleCell'
 
     simulationTime = args.run_time
 
