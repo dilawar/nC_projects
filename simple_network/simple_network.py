@@ -120,6 +120,9 @@ def make_synapse(pre, post, excitatory = True):
 
     mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
         post.path))
+    moose.setClock(0, 1e-6)
+    moose.useClock(0, pre.path, 'process')
+    moose.useClock(0, post.path, 'process')
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
     if excitatory:
         spikegen.threshold = float(args.synaptic_threshold[0])
@@ -279,9 +282,6 @@ def simulate(simulationTime, solver='hsolve'):
         moose.reinit()
 
     mu.info("Simulating for %s seconds" % simulationTime)
-    moose.setClock(1, 1e-6)
-    moose.useClock(1, '/##', 'process')
-    moose.useClock(1, '/##', 'init')
     moose.reinit()
     moose.start(simulationTime)
     mu.info("Total plots %s" % len(tables))
@@ -291,7 +291,7 @@ def simulate(simulationTime, solver='hsolve'):
             , title = 'Input stimulus'
             , outfile = 'input.png'
             )
-    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=True
+    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
             , average = True
             , filter=["soma", "axon"]
             , title = "Vm at somas and axons"

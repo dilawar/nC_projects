@@ -119,12 +119,6 @@ Complete network structure generated with project: simple_cell saved with neuroC
                         <bio:group>all</bio:group>
                     </bio:parameter>
                 </bio:mechanism>
-
-                <bio:mechanism name="kdr" type="Chennel Mechanism">
-                    <bio:parameter name="gmax" value="10.0">
-                        <bio:group>soma_group</bio:group>
-                    </bio:parameter>
-                </bio:mechanism>
                 
 
                 <bio:spec_capacitance>
