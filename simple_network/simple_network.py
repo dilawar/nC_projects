@@ -47,7 +47,8 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
 
     assert type(dataDict) == dict, "Got %s" % type(dataDict)
     clock = moose.Clock('/clock')
-    legend = kwargs.get('legend', False)
+    legend = kwargs.get('legend', True)
+    outfile = kwargs.get('outfile', None)
 
     filters = [ x.lower() for x in kwargs.get('filter', [])]
 
@@ -83,9 +84,10 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
                 yvec = dataDict[k].vector
                 xvec = np.linspace(0, clock.currentTime, len(yvec))
                 pylab.plot(xvec, yvec, label=str(k))
+                pylab.legend(loc='best', framealpha=0.4, prop={'size':6})
                 averageData.append(yvec)
                 if legend:
-                    pylab.legend(loc='best', framealpha=0.4)
+                    pylab.legend(loc='best', framealpha=0.4, prop={'size':6})
         else:
             if plotThis:
                 pylab.subplot(len(dataDict), 1, i)
@@ -93,25 +95,48 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
                 xvec = np.linspace(0, clock.currentTime, len(yvec))
                 averageData.append(yvec)
                 pylab.plot(xvec, yvec, label=str(k))
+                pylab.legend(loc='best', framealpha=0.4, prop={'size':6})
                 if legend:
-                    pylab.legend(loc='best', framealpha=0.4)
+                    pylab.legend(loc='best', framealpha=0.4, prop={'size':6})
 
     pylab.title(kwargs.get('title', ''))
     pylab.ylabel(kwargs.get('ylabel', ''))
     pylab.xlabel("Time (sec)")
+    if outfile:
+        print("Writing plot to %s" % outfile)
+        pylab.savefig("%s" % outfile)
+
     average = kwargs.get('average', False)
     if average:
         pylab.figure()
         pylab.plot(xvec, np.mean(averageData, axis=0))
+        if outfile:
+            print("Writing plot to %s" % outfile)
+            pylab.savefig("avg_%s" % outfile)
 
 def make_synapse(pre, post, excitatory = True):
-    global totalSynapse
-    synchan = moose.SynChan('{}/synchan'.format(post.path))
-    synchan.connect('channel', post, 'channel')
+    #: SpikeGen detects when presynaptic Vm crosses threshold and
+    #: sends out a spike event
+    spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
+    if excitatory:
+        spikegen.threshold = float(args.synaptic_threshold[0])
+    else:
+        spikegen.threshold = float(args.synaptic_threshold[1])
+
     #: Create SynHandler to handle spike event input and set the
     #: activation input of synchan
     synhandler = moose.SimpleSynHandler('%s/synhandler' % post.path)
-    synhandler.synapse.num += 1
+    synhandler.synapse.num = 1
+
+    pre.connect('VmOut', spikegen, 'Vm')
+    for syn in synhandler.synapse:
+        spikegen.connect('spikeOut', syn, 'addSpike')
+
+    synchan = moose.SynChan('{}/synchan'.format(post.path))
+    synchan.Gbar = 1e-8
+    synchan.connect('channel', post, 'channel')
+    print("++ Synchan: %s, %s, %s" % (synchan.Gbar, synchan.tau1, synchan.tau2))
+
     for i in range(synhandler.synapse.num):
         synhandler.synapse[i].delay = 5e-3
         if excitatory:
@@ -121,20 +146,16 @@ def make_synapse(pre, post, excitatory = True):
 
     synhandler.connect('activationOut', synchan, 'activation')
 
-    #: SpikeGen detects when presynaptic Vm crosses threshold and
-    #: sends out a spike event
-    spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
-    if excitatory:
-        spikegen.threshold = float(args.synaptic_threshold[0])
-    else:
-        spikegen.threshold = float(args.synaptic_threshold[1])
+def getCompType(cellPath, type='axon'):
+    comps = moose.wildcardFind('{}/##[TYPE=Compartment]'.format(cellPath))
+    assert len(comps) > 0, "Cant find any compartment"
+    tComps = []
+    for c in comps:
+        if type in c.path.lower(): tComps.append(c)
 
-    pre.connect('VmOut', spikegen, 'Vm')
-    for syn in synhandler.synapse:
-        spikegen.connect('spikeOut', syn, 'addSpike')
-        totalSynapse += 1
-    return {'presynaptic': pre, 'postsynaptic': post, 'spikegen':
-            spikegen, 'synchan': synchan, 'synhandler': synhandler}
+    assert len(tComps) > 0, "Cant find any compartment with type %s" % type
+    return random.choice(tComps)
+
 
 def createRandomSynapse(numsynapse, excitatory):
     print("[INFO] Creating %s synapse (%s excitatory)" % (numsynapse, excitatory))
@@ -149,15 +170,14 @@ def createRandomSynapse(numsynapse, excitatory):
         cell1, cell2 = random.sample(cellPaths, 2)
         assert cell1 != cell2
         # select a compartment at random from each cell.
-        comp1 = random.choice(cells[cell1])
-        comp2 = random.choice(cells[cell2])
-        assert comp1.path != comp2.path
+        axon = getCompType(cell1, "axon")
+        dend = getCompType(cell2, "dend")
         if c == 0:
             mu.info("Creating an excitatory synapse")
-            make_synapse(comp1, comp2, True)
+            make_synapse(axon, dend, True)
         if c == 1:
             mu.info("Creating an inhib synapse")
-            make_synapse(comp1, comp2, False)
+            make_synapse(axon, dend, False)
     
 def loadCellModel(path, numCells):
     global cells
@@ -168,7 +188,7 @@ def loadCellModel(path, numCells):
     netList = []
     for i in range(numCells):
         cellPath = moose.Neutral('{}/cell{}'.format(network.path, i))
-        copyFrom = '/library/CA1'
+        copyFrom = '/library/SampleCell'
         try:
             a = moose.copy(moose.Neutral(copyFrom), cellPath)
         except: 
@@ -182,6 +202,7 @@ def loadCellModel(path, numCells):
     for c in comps:
         parentPath = '/'.join(c.path.split('/')[:-1])
         cells[parentPath].append(c)
+    assert len(cells) > 1, "Check copyFrom variable %s" % copyFrom
     return cells 
 
 def addPulseGen(c1, bursting, **kwargs):
@@ -203,13 +224,19 @@ def addPulseGen(c1, bursting, **kwargs):
     inputTables[c1.path] = table
     tables[c1.path] = table
 
-def setRecorder(elems):
+def setRecorder(elems, filters=[]):
     global outputTables, tables
-    for elem in elems:
-        table = moose.Table('{}/table'.format(elem.path))
-        table.connect('requestOut', elem, 'getVm')
-        tables[elem.path] = table
-        outputTables[elem.path] = table
+    assert len(elems) > 1, "No elements are given for setting records"
+    [addTable(elem, filters)  for elem in elems]
+    mu.info("Total %s recorders added" % len(outputTables))
+
+def addTable(elem, filters):
+    for f in filters:
+        if f in elem.path.lower():
+            table = moose.Table('{}/table'.format(elem.path))
+            table.connect('requestOut', elem, 'getVm')
+            tables[elem.path] = table
+            outputTables[elem.path] = table
 
 def getSoma(cell):
     comp = moose.wildcardFind('{}/#[TYPE=Compartment]'.format(cell))
@@ -245,12 +272,15 @@ def simulate(simulationTime):
             , plot=True, subplot=False
             , average=False
             , title = 'Input stimulus'
+            , outfile = 'input.png'
             )
     saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
             , average = True
             , filter=["soma", "axon"]
+            , title = "Vm at somas and axons"
+            , outfile = 'soma_axon_vm.png'
             )
-    pylab.show()
+    #pylab.show()
 
 def main():
 
@@ -269,9 +299,9 @@ def main():
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    setRecorder(comps)
+    setRecorder(comps, filters=['axon'])
     simulate(simulationTime)
-    #mu.writeNetwork()
+    mu.writeGraphviz('network.dot')
 
 if __name__ == '__main__':
     import argparse
