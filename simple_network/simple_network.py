@@ -117,6 +117,9 @@ def saveRecords(dataDict, name, plot=False, subplot=True,**kwargs):
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
+
+    mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
+        post.path))
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
     if excitatory:
         spikegen.threshold = float(args.synaptic_threshold[0])
@@ -129,29 +132,32 @@ def make_synapse(pre, post, excitatory = True):
     synhandler.synapse.num = 1
 
     pre.connect('VmOut', spikegen, 'Vm')
-    for syn in synhandler.synapse:
+    for i, syn in enumerate(synhandler.synapse):
         spikegen.connect('spikeOut', syn, 'addSpike')
 
     synchan = moose.SynChan('{}/synchan'.format(post.path))
     synchan.Gbar = 1e-8
+    #synchan.tau1, synchan.tau2 = 10e-3, 10e-3
     synchan.connect('channel', post, 'channel')
-    #print("++ Synchan: %s, %s, %s" % (synchan.Gbar, synchan.tau1, synchan.tau2))
+    print("++ Synchan: %s, %s, %s, Ek %s" % (synchan.Gbar, synchan.tau1,
+        synchan.tau2, synchan.Ek))
 
     for i in range(synhandler.synapse.num):
-        synhandler.synapse[i].delay = 5e-3
+        synhandler.synapse[i].delay = 1e-3
         if excitatory:
             synhandler.synapse[i].weight = float(args.synaptic_weights[0])
         else:
             synhandler.synapse[i].weight = float(args.synaptic_weights[1])
-
+        print synhandler.synapse[i].weight
     synhandler.connect('activationOut', synchan, 'activation')
 
-def getCompType(cellPath, type='axon'):
+def getCompType(cellPath, types=['axon']):
     comps = moose.wildcardFind('{}/##[TYPE=Compartment]'.format(cellPath))
     assert len(comps) > 0, "Cant find any compartment"
     tComps = []
     for c in comps:
-        if type in c.path.lower(): tComps.append(c)
+        for t in types:
+            if t in c.path.lower(): tComps.append(c)
 
     assert len(tComps) > 0, "Cant find any compartment with type %s" % type
     return random.choice(tComps)
@@ -170,14 +176,14 @@ def createRandomSynapse(numsynapse, excitatory):
         cell1, cell2 = random.sample(cellPaths, 2)
         assert cell1 != cell2
         # select a compartment at random from each cell.
-        axon = getCompType(cell1, "axon")
-        dend = getCompType(cell2, "dend")
+        pre = getCompType(cell1, ["axon"])
+        post = getCompType(cell2, ["dend", 'soma'])
         if c == 0:
             mu.info("Creating an excitatory synapse")
-            make_synapse(axon, dend, True)
+            make_synapse(pre, post, True)
         if c == 1:
             mu.info("Creating an inhib synapse")
-            make_synapse(axon, dend, False)
+            make_synapse(pre, post, False)
     
 def loadCellModel(path, numCells):
     global cells
@@ -264,8 +270,18 @@ def setupStimulus(stimulatedNeurons, burstingNeurons):
             mu.info("A single spiking neuron")
             addPulseGen(soma, bursting=False)
 
-def simulate(simulationTime):
+def simulate(simulationTime, solver='hsolve'):
+
+    if solver == 'hsolve':
+        solver = moose.HSolve('/hsolve')
+        solver.dt = 1e-6
+        solver.target = '/network'
+        moose.reinit()
+
     mu.info("Simulating for %s seconds" % simulationTime)
+    moose.setClock(1, 1e-6)
+    moose.useClock(1, '/##', 'process')
+    moose.useClock(1, '/##', 'init')
     moose.reinit()
     moose.start(simulationTime)
     mu.info("Total plots %s" % len(tables))
@@ -275,7 +291,7 @@ def simulate(simulationTime):
             , title = 'Input stimulus'
             , outfile = 'input.png'
             )
-    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=False
+    saveRecords(outputTables, 'compartments_vm', plot=True, subplot=True
             , average = True
             , filter=["soma", "axon"]
             , title = "Vm at somas and axons"
@@ -302,8 +318,11 @@ def main():
 
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
+
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps, filters=['axon'])
+    
+    mu.verify()
     simulate(simulationTime)
     mu.writeGraphviz('network.dot')
 
