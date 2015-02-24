@@ -72,6 +72,11 @@ def make_synapse(pre, post, excitatory = True):
     synchan.tau1, synchan.tau2 = 1e-3, 1e-3
     synchan.connect('channel', post, 'channel')
 
+    table = moose.Table('{}/table'.format(synchan.path))
+    table.connect('requestOut', synchan, 'getGk')
+    synTables[synchan.path] = table
+
+
     for i in range(synhandler.synapse.num):
         synhandler.synapse[i].delay = 1e-3
         syn = synhandler.synapse[i]
@@ -79,11 +84,6 @@ def make_synapse(pre, post, excitatory = True):
             synhandler.synapse[i].weight = float(args.synaptic_weights[0])
         else:
             synhandler.synapse[i].weight = float(args.synaptic_weights[1])
-
-        table = moose.Table('{}/table'.format(syn.path))
-        table.connect('requestOut', syn, 'getWeight')
-        synTables[synchan.path] = table
-
     synhandler.connect('activationOut', synchan, 'activation')
 
 
@@ -212,11 +212,15 @@ def simulate(simulationTime, solver='hsolve'):
 
     if solver == 'hsolve':
         solver = moose.HSolve('/hsolve')
-        solver.dt = 1e-6
+        solver.dt = 0.5e-6
         solver.target = '/network'
         moose.reinit()
 
     mu.info("Simulating for %s seconds" % simulationTime)
+    moose.setClock(1, 10e-6)
+    moose.useClock(1, '/network/##', 'process')
+    moose.reinit()
+
     moose.reinit()
     moose.start(simulationTime)
     mu.info("Total plots %s" % len(tables))
