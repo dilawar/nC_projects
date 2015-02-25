@@ -87,6 +87,25 @@ def make_synapse(pre, post, excitatory = True):
     synhandler.connect('activationOut', synchan, 'activation')
 
 
+def count_spikes(tables, threshold=0):
+    nSpikes = 0
+    spikeBegin = False
+    spikeEnds = False
+    for t in tables:
+        for x in t.vector:
+            if x > threshold:
+                if not spikeBegin:
+                    spikeBegin = True
+                    spikeEnds = False
+                else: pass
+            else:
+                if spikeBegin:
+                    spikeEnds = True
+                    spikeBegin = False
+                    nSpikes += 1
+    return nSpikes
+
+
 def getCompType(cellPath, types=['axon']):
     comps = moose.wildcardFind('{}/##[TYPE=Compartment]'.format(cellPath))
     assert len(comps) > 0, "Cant find any compartment"
@@ -225,6 +244,8 @@ def simulate(simulationTime, solver='hsolve'):
     moose.reinit()
     moose.start(simulationTime)
     plotTables()
+    totalSpikes = count_spikes(outputTables.values(), -20e-3)
+    mu.info("Total spikes in axons: %s" % totalSpikes)
 
 def plotTables():
     global outputTables
