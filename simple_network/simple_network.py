@@ -195,20 +195,28 @@ def addPulseGen(c1, bursting, **kwargs):
     inputTables[c1.path] = table
     tables[c1.path] = table
 
-def setRecorder(elems, filters=[]):
+def setRecorder(elems, filters=[], total = 0):
     global outputTables, tables
     assert len(elems) > 1, "No elements are given for setting records"
-    [addTable(elem, filters)  for elem in elems]
+
+    out = []
+    for el in elems:
+        for f in filters:
+            if f in el.path.lower(): out.append(el)
+
+    if total:
+        mu.info("Selecting %s tables randomly" % total)
+        out = np.random.choice(out, total)
+
+    [addTable(o)  for o in out]
     mu.info("Total %s recorders added" % len(outputTables))
 
-def addTable(elem, filters, field='getVm'):
+def addTable(elem, field='getVm'):
     table = None
-    for f in filters:
-        if f in elem.path.lower():
-            table = moose.Table('{}/table'.format(elem.path))
-            table.connect('requestOut', elem, field)
-            tables[elem.path] = table
-            outputTables[elem.path] = table
+    table = moose.Table('{}/table'.format(elem.path))
+    table.connect('requestOut', elem, field)
+    tables[elem.path] = table
+    outputTables[elem.path] = table
     return table
 
 def getSoma(cell):
@@ -315,7 +323,7 @@ def main():
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    setRecorder(comps, filters=['axon'])
+    setRecorder(comps, filters=['axon'], total = 10)
     
     mu.verify()
     simulate(simulationTime)
