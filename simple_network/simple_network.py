@@ -254,10 +254,11 @@ def plotAverage(tables, outfile = None):
     yvec = np.average(avgs, axis=0)
     pylab.figure()
     pylab.plot(np.linspace(0, clock.currentTime, len(yvec)), yvec)
-    pylab.title("Average activity in all somas and axons")
+    pylab.title("Average activ axons")
     pylab.xlabel("Time (sec)")
     pylab.ylabel("Vm (Volts)")
     if outfile:
+        mu.info("Wrinting graph to %s" % outfile)
         pylab.savefig(outfile)
     else:
         pylab.show()
