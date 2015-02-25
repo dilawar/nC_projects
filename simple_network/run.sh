@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-set -x
-#rm -rf *.png
+
+### NOTICE: Do not write negative numbers in sceintific notations.
+
+## PARAMTERS
 #nc: Number of cells
 #ns: number of synapse
 #es: Excitatory synapse (fraction of total)
@@ -11,6 +13,9 @@ set -x
 #sct: spike detection threshold value
 #in: input pulse, triplet [freq, width (mS), height (nA)]
 #rt: run time in seconds.
+
+#rm -rf *.png
+set -x
 python ./simple_network.py -f \
     ./generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
     -nc 10 -ns 50\
