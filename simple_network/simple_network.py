@@ -87,7 +87,7 @@ def make_synapse(pre, post, excitatory = True):
     synhandler.connect('activationOut', synchan, 'activation')
 
 
-def count_spikes(tables, threshold=0):
+def count_spikes(tables, threshold):
     nSpikes = 0
     spikeBegin = False
     spikeEnds = False
@@ -164,22 +164,30 @@ def loadCellModel(path, numCells):
     for c in comps:
         parentPath = '/'.join(c.path.split('/')[:-1])
         cells[parentPath].append(c)
-    print comps
     assert len(cells) > 1, "Check copyFrom variable %s" % copyFrom
     return cells 
 
 def addPulseGen(c1, bursting, **kwargs):
     global simulationTime
     global inputTables, tables
-    mu.info("Adding a pulse-gen to %s" % c1.path)
+
+    global args
+    freq, width, height = args.input
+    delay = (1.0 / float(freq)) - float(width)
+    assert delay > 0.0, "Wrong value %s" % args.input
+
+    mu.info([ "Adding a pulse-gen  to %s" % c1.path
+        , "Pulse: width %s, height %s, delay %s" % (width, height, delay) ]
+        )
+
     pulse = moose.PulseGen('%s/pulse' % c1.path)
-    pulse.level[0] = 1e-9
+    pulse.level[0] = float(height)
     if bursting:
-        pulse.delay[0] = 3e-1
-        pulse.width[0] = 2e-1
+        pulse.delay[0] = 4e-1
+        pulse.width[0] = 3e-1
     else:
-        pulse.delay[0] = 100e-3
-        pulse.width[0] = 5e-3
+        pulse.delay[0] = delay
+        pulse.width[0] = float(width)
 
     pulse.connect('output', c1, 'injectMsg')
     table = moose.Table('%s/tab' % (pulse.path))
@@ -229,7 +237,7 @@ def setupStimulus(stimulatedNeurons, burstingNeurons):
             addPulseGen(soma, bursting=False)
 
 def simulate(simulationTime, solver='hsolve'):
-
+    global args
     if solver == 'hsolve':
         solver = moose.HSolve('/hsolve')
         solver.dt = 0.5e-6
@@ -244,8 +252,8 @@ def simulate(simulationTime, solver='hsolve'):
     moose.reinit()
     moose.start(simulationTime)
     plotTables()
-    totalSpikes = count_spikes(outputTables.values(), -20e-3)
-    mu.info("Total spikes in axons: %s" % totalSpikes)
+    totalSpikes = count_spikes(outputTables.values(), args.spike_count_threshold)
+    print("[RESULT] Total spikes in axons: %s" % totalSpikes)
 
 def plotTables():
     global outputTables
@@ -256,7 +264,8 @@ def plotTables():
     #mu.saveRecords(inputTables, outfile = 'data.moose')
     #mu.saveRecords(outputTables, outfile = 'soma_axon_vm.moose')
 
-    mu.plotRecords(inputTables, outfile = 'input.png')
+    mu.plotRecords(inputTables, outfile = 'input.png', subplot=False)
+
     mu.plotRecords(outputTables, subplot=True
             , title = "Output tables"
             , legend=True, outfile = 'comp_vm.png')
@@ -275,7 +284,7 @@ def plotAverage(tables, outfile = None):
     yvec = np.average(avgs, axis=0)
     pylab.figure()
     pylab.plot(np.linspace(0, clock.currentTime, len(yvec)), yvec)
-    pylab.title("Average activ axons")
+    pylab.title("Average Vm of all axons")
     pylab.xlabel("Time (sec)")
     pylab.ylabel("Vm (Volts)")
     if outfile:
@@ -356,6 +365,12 @@ if __name__ == '__main__':
             , help = 'Synapse threshold [Excitatory, Inhibitory]'
             )
 
+    parser.add_argument('--spike_count_threshold', '-sct'
+            , default = -10e-3
+            , type = float
+            , help = "When counting spikes, this value is taken as threshold"
+            )
+
     parser.add_argument('--synaptic_weights', '-sw'
         , nargs = 2
         , default = [5e-3, -20e-3]
@@ -363,11 +378,18 @@ if __name__ == '__main__':
         , help = 'Synaptic weights [Excitatory, inhibitory]'
         )
 
+    parser.add_argument('--input', '-in'
+        , nargs = 3
+        , required = True
+        , help = 'Input pulset to neurons [frequency, width (sec), height (A)]'
+        )
+
     parser.add_argument('--run_time', '-rt'
         , required = True
         , type = float
         , help = 'Simulation time in seconds.'
         )
+
 
     global args
     class Args: pass 
