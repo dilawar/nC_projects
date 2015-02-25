@@ -235,6 +235,9 @@ def simulate(simulationTime, solver='hsolve'):
     mu.plotRecords(synTables, subplot=True, legend=True
             , title = "Synaptic tables"
             , outfile = 'synchan.png')
+
+    # Average plots.
+
     #pylab.show()
 
 def main():
