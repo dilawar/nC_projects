@@ -279,7 +279,7 @@ def main():
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    setRecorder(comps, filters=['axon', "soma"])
+    setRecorder(comps, filters=['axon'])
     
     mu.verify()
     simulate(simulationTime)

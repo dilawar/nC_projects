@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -x
 #rm -rf *.png
-python ./simple_network.py -f \
+python ./network_nml2.py -f \
     ./../simple_cell/generatedNeuroML2/SampleCell.cell.nml \
     -nc 20 -ns 100\
     -es 1.0 -sn 0.2 -bm 0.0 \

@@ -16,7 +16,7 @@ __status__           = "Development"
 
 import moose
 import moose.utils as mu
-import moose.neuroml as nml
+import neuroml2 as nml2
 import numpy as np
 import random
 import pylab
@@ -125,7 +125,11 @@ def loadCellModel(path, numCells):
     global cells
     global copyFrom
 
-    nmlObj = nml.NeuroML()
+    nmlObj = nml2.NeuroML(path)
+    nmlObj.load()
+
+
+    sys.exit()
     projDict, popDict = nmlObj.readNeuroMLFromFile(path)
     network = moose.Neutral('/network')
     network = moose.Neutral('/network')
