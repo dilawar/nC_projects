@@ -202,11 +202,11 @@ def setRecorder(elems, filters=[], total = 0):
     out = []
     for el in elems:
         for f in filters:
-            if f in el.path.lower(): out.append(el)
+            if f.lower() in el.path.lower(): out.append(el)
 
-    if total:
+    if total and total <= len(out):
         mu.info("Selecting %s tables randomly" % total)
-        out = np.random.choice(out, total)
+        out = random.sample(out, total)
 
     [addTable(o)  for o in out]
     mu.info("Total %s recorders added" % len(outputTables))
@@ -286,11 +286,13 @@ def plotTables():
 
 def plotAverage(tables, outfile = None):
     avgs = []
+
     for k in tables:
         avgs.append(tables[k].vector)
-    
+
     clock = moose.Clock('/clock')
     yvec = np.average(avgs, axis=0)
+
     pylab.figure()
     pylab.plot(np.linspace(0, clock.currentTime, len(yvec)), yvec)
     pylab.title("Average Vm of all axons")
@@ -326,6 +328,7 @@ def main():
 
     filters = args.total_plots[0:-1]
     total = args.total_plots[-1]
+
     setRecorder(comps, filters, total = int(total))
     
     mu.verify()
