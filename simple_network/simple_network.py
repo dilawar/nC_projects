@@ -269,9 +269,10 @@ def plotTables():
     mu.plotRecords(outputTables, subplot=True
             , title = "Output tables"
             , legend=True, outfile = 'comp_vm.png')
-    mu.plotRecords(synTables, subplot=True, legend=True
-            , title = "Synaptic tables"
-            , outfile = 'synchan.png')
+
+    #mu.plotRecords(synTables, subplot=True, legend=True
+    #        , title = "Synaptic tables"
+    #        , outfile = 'synchan.png')
 
     plotAverage(outputTables, outfile="avg_soma.png")
 
