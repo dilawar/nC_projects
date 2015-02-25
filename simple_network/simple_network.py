@@ -323,7 +323,10 @@ def main():
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    setRecorder(comps, filters=['axon'], total = 10)
+
+    filters = args.total_plots[0:-1]
+    total = args.total_plots[-1]
+    setRecorder(comps, filters, total = int(total))
     
     mu.verify()
     simulate(simulationTime)
@@ -393,6 +396,13 @@ if __name__ == '__main__':
         , help = 'Input pulset to neurons [frequency, width (sec), height (A)]'
         )
 
+    parser.add_argument('--total_plots', '-tp'
+        , nargs = '+'
+        , required = True
+        , default = [ "axon", 10 ]
+        , help = 'Total plots. Last entry is number of plots randomly selected'
+            + '. Other entries are type of plots.'
+        )
     parser.add_argument('--run_time', '-rt'
         , required = True
         , type = float
