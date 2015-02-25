@@ -223,6 +223,11 @@ def simulate(simulationTime, solver='hsolve'):
 
     moose.reinit()
     moose.start(simulationTime)
+
+def plotTables():
+    global outputTables
+    global tables
+
     mu.info("Total plots %s" % len(tables))
 
     #mu.saveRecords(inputTables, outfile = 'data.moose')
@@ -236,9 +241,21 @@ def simulate(simulationTime, solver='hsolve'):
             , title = "Synaptic tables"
             , outfile = 'synchan.png')
 
-    # Average plots.
 
-    #pylab.show()
+def plotAverage(tables):
+    avgs = []
+    for k in tables:
+        avgs.append(tables[k].vector)
+    
+    clock = moose.Clock('/clock')
+    yvec = np.average(avgs, axis=0)
+    pylab.figure()
+    pylab.plot(np.linspace(0, clock.currentTime, len(yvec)), yvec)
+    pylab.title("Average activity in all somas and axons")
+    pylab.xlabel("Time (sec)")
+    pylab.ylabel("Vm (Volts)")
+    pylab.savefig("avg_soma_axon.png")
+    pylab.show()
 
 def main():
 
@@ -261,11 +278,13 @@ def main():
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    setRecorder(comps, filters=['dend'])
+    setRecorder(comps, filters=['axon', "soma"])
     
     mu.verify()
     simulate(simulationTime)
-    mu.writeGraphviz('network.dot')
+    plotAverage(outputTables)
+
+    #mu.writeGraphviz('network.dot')
 
 if __name__ == '__main__':
     import argparse
