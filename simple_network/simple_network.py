@@ -145,6 +145,7 @@ def loadCellModel(path, numCells):
     for c in comps:
         parentPath = '/'.join(c.path.split('/')[:-1])
         cells[parentPath].append(c)
+    print comps
     assert len(cells) > 1, "Check copyFrom variable %s" % copyFrom
     return cells 
 
