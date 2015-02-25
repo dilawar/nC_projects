@@ -224,6 +224,7 @@ def simulate(simulationTime, solver='hsolve'):
 
     moose.reinit()
     moose.start(simulationTime)
+    plotTables()
 
 def plotTables():
     global outputTables
@@ -242,8 +243,9 @@ def plotTables():
             , title = "Synaptic tables"
             , outfile = 'synchan.png')
 
+    plotAverage(outputTables, outfile="avg_soma.png")
 
-def plotAverage(tables):
+def plotAverage(tables, outfile = None):
     avgs = []
     for k in tables:
         avgs.append(tables[k].vector)
@@ -255,8 +257,10 @@ def plotAverage(tables):
     pylab.title("Average activity in all somas and axons")
     pylab.xlabel("Time (sec)")
     pylab.ylabel("Vm (Volts)")
-    pylab.savefig("avg_soma_axon.png")
-    pylab.show()
+    if outfile:
+        pylab.savefig(outfile)
+    else:
+        pylab.show()
 
 def main():
 
@@ -283,7 +287,6 @@ def main():
     
     mu.verify()
     simulate(simulationTime)
-    plotAverage(outputTables)
 
     #mu.writeGraphviz('network.dot')
 
