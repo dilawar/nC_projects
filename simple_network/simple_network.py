@@ -176,13 +176,10 @@ def addPulseGen(c1, bursting, **kwargs):
     global inputTables, tables
 
     global args
+
     freq, width, height = args.input
     delay = (1.0 / float(freq)) - float(width)
     assert delay > 0.0, "Wrong value %s" % args.input
-
-    mu.info([ "Adding a pulse-gen  to %s" % c1.path
-        , "Pulse: width %s, height %s, delay %s" % (width, height, delay) ]
-        )
 
     pulse = moose.PulseGen('%s/pulse' % c1.path)
     pulse.level[0] = float(height)
@@ -228,21 +225,24 @@ def getSoma(cell):
 
 
 def setupStimulus(stimulatedNeurons, burstingNeurons):
-    mu.info("Out of %s stimulated neurons, %s (fraction) are bursting" % (stimulatedNeurons,
-        burstingNeurons))
+    mu.info("Out of %s stimulated neurons, %s (fraction) are bursting" % (
+        stimulatedNeurons, burstingNeurons)
+        )
     global cells
     choices = np.random.choice([0,1], stimulatedNeurons,
             p=[burstingNeurons,1.0-burstingNeurons]
             )
+    spikeMode, burstMode = 0, 0
     for c in choices:
         cell = random.choice(cells.keys())
         soma = getSoma(cell)
         if c == 0:
-            #mu.info("A bursting neuron")
             addPulseGen(soma, bursting=True)
+            spikeMode += 1
         else:
-            #mu.info("A single spiking neuron")
             addPulseGen(soma, bursting=False)
+            burstMode += 1
+    mu.info("Total (spiking:%s, burting:%s) pulse-gen added" % (spikeMode, burstMode))
 
 def simulate(simulationTime, solver='hsolve'):
     global args
