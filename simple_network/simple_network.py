@@ -47,8 +47,8 @@ def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
 
-    mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
-        post.path))
+    #mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
+        #post.path))
     moose.setClock(0, 1e-6)
     moose.useClock(0, pre.path, 'process')
     moose.useClock(0, post.path, 'process')
@@ -119,8 +119,9 @@ def getCompType(cellPath, types=['axon']):
 
 
 def createRandomSynapse(numsynapse, excitatory):
-    print("[INFO] Creating %s synapse (%s excitatory)" % (numsynapse, excitatory))
+    #print("[INFO] Creating %s synapse (%s excitatory)" % (numsynapse, excitatory))
     global cells
+    excitatoryS, inhibS = 0, 0
     choices = np.random.choice([0,1], numsynapse, p=[excitatory, 1-excitatory])
     cellPaths = cells.keys()
     if len(cells) < 2:
@@ -134,11 +135,14 @@ def createRandomSynapse(numsynapse, excitatory):
         pre = getCompType(cell1, ["axon"])
         post = getCompType(cell2, ["dend", 'soma'])
         if c == 0:
-            mu.info("Creating an excitatory synapse")
+            #mu.info("Creating an excitatory synapse")
             make_synapse(pre, post, True)
+            excitatoryS += 1
         if c == 1:
-            mu.info("Creating an inhib synapse")
+            #mu.info("Creating an inhib synapse")
             make_synapse(pre, post, False)
+            inhibS +=1 
+    mu.info("Syanpses: Exc: %s, Inh: %s" % (excitatoryS, inhibS))
     
 def loadCellModel(path, numCells):
     global cells
@@ -154,8 +158,8 @@ def loadCellModel(path, numCells):
         try:
             a = moose.copy(moose.Neutral(copyFrom), cellPath)
         except: 
-            print("Could not copy %s to %s" % (copyFrom, cellPath))
-            print("Available paths are: \n")
+            mu.warn("Could not copy %s to %s" % (copyFrom, cellPath))
+            mu.info("Available paths are: \n")
             for p in moose.wildcardFind('/library/##'):
                 print p.path
             sys.exit(0)
@@ -204,10 +208,6 @@ def setRecorder(elems, filters=[], total = 0):
         for f in filters:
             if f.lower() in el.path.lower(): out.append(el)
 
-    if total and total <= len(out):
-        mu.info("Selecting %s tables randomly" % total)
-        out = random.sample(out, total)
-
     [addTable(o)  for o in out]
     mu.info("Total %s recorders added" % len(outputTables))
 
@@ -228,7 +228,7 @@ def getSoma(cell):
 
 
 def setupStimulus(stimulatedNeurons, burstingNeurons):
-    print("[INFO] Out of %s neurons, %s (fraction) are bursting" % (stimulatedNeurons,
+    mu.info("Out of %s stimulated neurons, %s (fraction) are bursting" % (stimulatedNeurons,
         burstingNeurons))
     global cells
     choices = np.random.choice([0,1], stimulatedNeurons,
@@ -238,10 +238,10 @@ def setupStimulus(stimulatedNeurons, burstingNeurons):
         cell = random.choice(cells.keys())
         soma = getSoma(cell)
         if c == 0:
-            mu.info("A bursting neuron")
+            #mu.info("A bursting neuron")
             addPulseGen(soma, bursting=True)
         else:
-            mu.info("A single spiking neuron")
+            #mu.info("A single spiking neuron")
             addPulseGen(soma, bursting=False)
 
 def simulate(simulationTime, solver='hsolve'):
@@ -259,22 +259,23 @@ def simulate(simulationTime, solver='hsolve'):
 
     moose.reinit()
     moose.start(simulationTime)
-    plotTables()
-    totalSpikes = count_spikes(outputTables.values(), args.spike_count_threshold)
-    print("[RESULT] Total spikes in axons: %s" % totalSpikes)
-
-def plotTables():
+    
+def plotTables(total):
     global outputTables
     global tables
-
-    mu.info("Total plots %s" % len(tables))
 
     #mu.saveRecords(inputTables, outfile = 'data.moose')
     #mu.saveRecords(outputTables, outfile = 'soma_axon_vm.moose')
 
     mu.plotRecords(inputTables, outfile = 'input.png', subplot=False)
 
-    mu.plotRecords(outputTables, subplot=True
+    mu.info("Selecting %s tables randomly to plot" % total)
+    keys = random.sample(outputTables.keys(), total)
+    tabToPlot = {}
+    for k in keys:
+        tabToPlot[k] = outputTables[k]
+
+    mu.plotRecords(tabToPlot, subplot=True
             , title = "Output tables"
             , legend=True, outfile = 'comp_vm.png')
 
@@ -321,6 +322,7 @@ def main():
     loadCellModel(modelFile, args.num_cells)
     createRandomSynapse(args.num_synapse, args.excitatory_synapses)
 
+    assert args.stimulated_neurons <= 1.0, "Fraction can't be larger than 1.0"
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
@@ -329,10 +331,14 @@ def main():
     filters = args.total_plots[0:-1]
     total = args.total_plots[-1]
 
-    setRecorder(comps, filters, total = int(total))
+    setRecorder(comps, filters)
     
     mu.verify()
     simulate(simulationTime)
+    plotTables(int(total))
+
+    totalSpikes = count_spikes(outputTables.values(), args.spike_count_threshold)
+    print("[RESULT] Total spikes in axons: %s" % totalSpikes)
 
     #mu.writeGraphviz('network.dot')
 
