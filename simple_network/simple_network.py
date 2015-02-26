@@ -238,10 +238,10 @@ def setupStimulus(stimulatedNeurons, burstingNeurons):
         soma = getSoma(cell)
         if c == 0:
             addPulseGen(soma, bursting=True)
-            spikeMode += 1
+            burstMode += 1
         else:
             addPulseGen(soma, bursting=False)
-            burstMode += 1
+            spikeMode += 1
     mu.info("Total (spiking:%s, burting:%s) pulse-gen added" % (spikeMode, burstMode))
 
 def simulate(simulationTime, solver='hsolve'):

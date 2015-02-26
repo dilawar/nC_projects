@@ -20,8 +20,8 @@ set -x
 python ./simple_network.py -f \
     ./generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
     -nc 100 -ns 1000\
-    -es 0.8 -sn 20 -bm 0.0001 \
+    -es 0.8 -sn 0.2 -bm 0.0001 \
     -sw 0.1 -0.0050 -st -0.055 -0.055 \
     -tp axon 10 \
-    -in 40 0.005 0.000000001 -sct 0.00 -rt 1
+    -in 40 0.005 0.000000001 -sct 0.00 -rt 0.5
 
