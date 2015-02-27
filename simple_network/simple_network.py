@@ -45,22 +45,25 @@ now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
 if not os.path.isdir(datadir): os.makedirs(datadir)
 
-def clampSomas(comps, total = 10):
+def clampSomas(comps, total = 0):
+    global args
     somas = []
     for c in comps:
         if "soma" in c.path.lower():
             somas.append(c)
 
+    if not total:
+        total = int( args.num_cells * args.clamped_neurons)
+    
+    mu.info("Clamping total %s neurons" % total)
     clampedSomas = random.sample(somas, total)
-    vclamp = moose.VClamp('/network/vclamp')
-    command = moose.PulseGen('/network/vclamp/command')
-    command.level[0] = -80e-9
-    command.width[0] = simulationTime
-    command.connect('output', vclamp, 'commandIn')
+    command = moose.PulseGen('/network/clamp')
+    command.level[0] = -10e-9
+    command.width[0] = float(simulationTime)
+    command.delay[0] = 0.0
 
     for soma in clampedSomas:
-        vclamp.connect('currentOut', soma, 'injectMsg')
-        soma.connect('VmOut', vclamp, 'sensedIn')
+        command.connect('output', soma, 'injectMsg')
 
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
@@ -68,7 +71,7 @@ def make_synapse(pre, post, excitatory = True):
 
     #mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
         #post.path))
-    moose.setClock(0, 1e-6)
+    moose.setClock(0, 10e-6)
     moose.useClock(0, pre.path, 'process')
     moose.useClock(0, post.path, 'process')
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
@@ -456,11 +459,11 @@ if __name__ == '__main__':
             + '. Other entries are type of plots.'
         )
 
-    parser.add_argument('--kgbar', '-kg'
-            , nargs = 1
-            , required = False
+    parser.add_argument('--clamped_neurons', '-cn'
+            , required = True
+            , default = 0.0
             , type = float
-            , help = "Gbar value of Potassium channel in pS"
+            , help = "Clamped neurons (fraction of total)"
             )
 
     parser.add_argument('--run_time', '-rt'
