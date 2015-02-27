@@ -36,6 +36,8 @@ synTables = {}
 outputTables = {}
 vmTables = {}
 
+iKTables = {}
+
 args = None
 
 import os, datetime
@@ -85,6 +87,21 @@ def make_synapse(pre, post, excitatory = True):
         else:
             synhandler.synapse[i].weight = float(args.synaptic_weights[1])
     synhandler.connect('activationOut', synchan, 'activation')
+
+
+def setupChannels():
+    global args
+    channels = moose.wildcardFind('/network/##[TYPE=HHChannel]')
+
+    elems = []
+    for c in channels:
+        if c.name == "KConductance":
+            elems.append(c)
+    es = random.sample(elems, 10)
+
+    global iKTables
+    for e in es: addTable(e, iKTables, 'getIk')
+
 
 
 def count_spikes(tables, threshold):
@@ -205,15 +222,14 @@ def setRecorder(elems, filters=[], total = 0):
         for f in filters:
             if f.lower() in el.path.lower(): out.append(el)
 
-    [addTable(o)  for o in out]
+    [addTable(o, outputTables)  for o in out]
     mu.info("Total %s recorders added" % len(outputTables))
 
-def addTable(elem, field='getVm'):
+def addTable(elem, tables, field='getVm'):
     table = None
     table = moose.Table('{}/table'.format(elem.path))
     table.connect('requestOut', elem, field)
     tables[elem.path] = table
-    outputTables[elem.path] = table
     return table
 
 def getSoma(cell):
@@ -328,6 +344,10 @@ def main():
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
 
+    # This function changes the Gbar values of channels. Currently only K
+    # channel.
+    setupChannels()
+
     filters = args.total_plots[0:-1]
     total = args.total_plots[-1]
 
@@ -336,6 +356,9 @@ def main():
     mu.verify()
     simulate(simulationTime)
     plotTables(int(total))
+
+    global iKTables
+    mu.plotRecords(iKTables, subplot=True, legend=True, outfile='i_channel.png')
 
     totalSpikes = count_spikes(outputTables.values(), args.spike_count_threshold)
     print("[RESULT] Total spikes in axons: %s" % totalSpikes)
@@ -412,6 +435,14 @@ if __name__ == '__main__':
         , help = 'Total plots. Last entry is number of plots randomly selected'
             + '. Other entries are type of plots.'
         )
+
+    parser.add_argument('--kgbar', '-kg'
+            , nargs = 1
+            , required = True
+            , type = float
+            , help = "Gbar value of Potassium channel in pS"
+            )
+
     parser.add_argument('--run_time', '-rt'
         , required = True
         , type = float
