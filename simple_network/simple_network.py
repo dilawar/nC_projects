@@ -45,6 +45,23 @@ now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
 if not os.path.isdir(datadir): os.makedirs(datadir)
 
+def clampSomas(comps, total = 10):
+    somas = []
+    for c in comps:
+        if "soma" in c.path.lower():
+            somas.append(c)
+
+    clampedSomas = random.sample(somas, total)
+    vclamp = moose.VClamp('/network/vclamp')
+    command = moose.PulseGen('/network/vclamp/command')
+    command.level[0] = -80e-9
+    command.width[0] = simulationTime
+    command.connect('output', vclamp, 'commandIn')
+
+    for soma in clampedSomas:
+        vclamp.connect('currentOut', soma, 'injectMsg')
+        soma.connect('VmOut', vclamp, 'sensedIn')
+
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
@@ -336,6 +353,8 @@ def main():
 
     modelFile = args.model_file
     loadCellModel(modelFile, args.num_cells)
+
+
     createRandomSynapse(args.num_synapse, args.excitatory_synapses)
 
     assert args.stimulated_neurons <= 1.0, "Fraction can't be larger than 1.0"
@@ -343,6 +362,7 @@ def main():
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
+    clampSomas(comps)
 
     # This function changes the Gbar values of channels. Currently only K
     # channel.
@@ -438,7 +458,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--kgbar', '-kg'
             , nargs = 1
-            , required = True
+            , required = False
             , type = float
             , help = "Gbar value of Potassium channel in pS"
             )
