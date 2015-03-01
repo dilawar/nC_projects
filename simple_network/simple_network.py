@@ -45,8 +45,8 @@ now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
 if not os.path.isdir(datadir): os.makedirs(datadir)
 
-moose.setClock(0, 1e-6)
-moose.setClock(1, 1e-6)
+moose.setClock(0, 10e-6)
+moose.setClock(1, 10e-6)
 
 # This clock is so slow that it nothing changes on cell
 moose.setClock(2, 1000)
@@ -74,9 +74,6 @@ def make_synapse(pre, post, excitatory = True):
 
     #mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
         #post.path))
-    moose.setClock(0, 10e-6)
-    moose.useClock(0, pre.path, 'process')
-    moose.useClock(0, post.path, 'process')
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
     if excitatory:
         spikegen.threshold = float(args.synaptic_threshold[0])
@@ -288,7 +285,7 @@ def simulate(simulationTime, solver='hsolve'):
     global args
     if solver == 'hsolve':
         solver = moose.HSolve('/hsolve')
-        solver.dt = 1e-6
+        solver.dt = 0.5e-6
         solver.target = '/network'
         moose.reinit()
 

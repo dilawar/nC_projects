@@ -100,7 +100,7 @@ Complete network structure generated with project: simple_cell saved with neuroC
             <biophysics units="Physiological Units">
 
                 <bio:mechanism name="KConductance" type="Channel Mechanism">
-                    <bio:parameter name="gmax" value="50.0">
+                    <bio:parameter name="gmax" value="10.0">
                         <bio:group>all</bio:group>
                     </bio:parameter>
                 </bio:mechanism>
