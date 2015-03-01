@@ -45,25 +45,29 @@ now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
 if not os.path.isdir(datadir): os.makedirs(datadir)
 
-def clampSomas(comps, total = 0):
+moose.setClock(0, 1e-6)
+moose.setClock(1, 1e-6)
+
+# This clock is so slow that it nothing changes on cell
+moose.setClock(2, 1000)
+
+
+def deactivateSomas(comps, init = -85e-3, total = 0):
     global args
     somas = []
     for c in comps:
-        if "soma" in c.path.lower():
-            somas.append(c)
+        if "soma" in c.path.lower(): somas.append(c.path)
 
     if not total:
-        total = int( args.num_cells * args.clamped_neurons)
+        total = int( args.num_cells * args.deactivated_somas)
     
-    mu.info("Clamping total %s neurons" % total)
-    clampedSomas = random.sample(somas, total)
-    command = moose.PulseGen('/network/clamp')
-    command.level[0] = -10e-9
-    command.width[0] = float(simulationTime)
-    command.delay[0] = 0.0
+    mu.info("Deactivating total %s somas" % total)
+    _deactivateSomas = set(random.sample(somas, total))
+    assert len(_deactivateSomas) == total, "Expected %s somas to be deactivated" % total
+    for cpath in _deactivateSomas:
+        moose.Compartment(cpath).initVm = init
+        moose.useClock(2, cpath, 'process')
 
-    for soma in clampedSomas:
-        command.connect('output', soma, 'injectMsg')
 
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
@@ -77,6 +81,7 @@ def make_synapse(pre, post, excitatory = True):
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
     if excitatory:
         spikegen.threshold = float(args.synaptic_threshold[0])
+    
     else:
         spikegen.threshold = float(args.synaptic_threshold[1])
 
@@ -284,15 +289,11 @@ def simulate(simulationTime, solver='hsolve'):
     global args
     if solver == 'hsolve':
         solver = moose.HSolve('/hsolve')
-        solver.dt = 0.5e-6
+        solver.dt = 1e-6
         solver.target = '/network'
         moose.reinit()
 
     mu.info("Simulating for %s seconds" % simulationTime)
-    moose.setClock(1, 10e-6)
-    moose.useClock(1, '/network/##', 'process')
-    moose.reinit()
-
     moose.reinit()
     moose.start(simulationTime)
     
@@ -364,9 +365,6 @@ def main():
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
-    comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
-    clampSomas(comps)
-
     # This function changes the Gbar values of channels. Currently only K
     # channel.
     setupChannels()
@@ -374,8 +372,16 @@ def main():
     filters = args.total_plots[0:-1]
     total = args.total_plots[-1]
 
+    comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps, filters)
-    
+
+    # Setup everything on default clock
+    moose.useClock(0, '/network/##', 'process')
+    moose.useClock(0, '/network/##', 'init')
+
+    deactivateSomas(comps)
+    moose.reinit()
+
     mu.verify()
     simulate(simulationTime)
     plotTables(int(total))
@@ -459,11 +465,11 @@ if __name__ == '__main__':
             + '. Other entries are type of plots.'
         )
 
-    parser.add_argument('--clamped_neurons', '-cn'
+    parser.add_argument('--deactivated_somas', '-ds'
             , required = True
             , default = 0.0
             , type = float
-            , help = "Clamped neurons (fraction of total)"
+            , help = "De-activated somas (fraction of total)"
             )
 
     parser.add_argument('--run_time', '-rt'
