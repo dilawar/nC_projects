@@ -10,18 +10,23 @@
 #bm: Stimulated neurons firing in burst mode (fraction of sn)
 #sw: synaptic weights [Excitatory, Inhib]
 #st: synaptic threshold [Exc, Inhib]
-#sct: spike detection threshold value
+#sct: spike detection threshold value (V)
 #in: input pulse, triplet [freq, width (S), height (A)]
+#ds: Fraction of deactivated somas [clamping voltage (V), fractions of cells]
 #tp: types, num. plots of types (e.g. axon soma), num selected randomly e.g. 10
 #rt: run time in seconds.
-#ds: deactivated somas [initVm (fixed), fraction of total neurons].
 
 #rm -rf *.png
 set -x
 python ./simple_network.py -f \
     ./generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
-    -nc 100 -ns 1000\
-    -es 0.8 -sn 0.2 -bm 0.0001 \
-    -sw 0.1 -0.0050 -st -0.055 -0.055 \
-    -tp axon 20 -ds -0.070 0.0 \
-    -in 40 0.005 0.000000001 -sct 0.00 -rt 1.0
+    -nc 100 -ns 1000 \
+    -es 0.5 \
+    -sn 0.2 -bm 0.00000005 \
+    -sw 0.0025 -0.0025 -st -0.055 -0.055 \
+    -ds -0.070 0.0 \
+    -tp axon 10 \
+    -in 40 0.005 0.000000001 \
+    -sct 0.015 \
+    -rt 1
+
