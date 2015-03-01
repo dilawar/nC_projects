@@ -52,14 +52,13 @@ moose.setClock(1, 1e-6)
 moose.setClock(2, 1000)
 
 
-def deactivateSomas(comps, init = -85e-3, total = 0):
+def deactivateSomas(comps):
     global args
+    init, totalFraction = args.deactivated_somas
+    total = int(args.num_cells * totalFraction)
     somas = []
     for c in comps:
         if "soma" in c.path.lower(): somas.append(c.path)
-
-    if not total:
-        total = int( args.num_cells * args.deactivated_somas)
     
     mu.info("Deactivating total %s somas" % total)
     _deactivateSomas = set(random.sample(somas, total))
@@ -466,10 +465,11 @@ if __name__ == '__main__':
         )
 
     parser.add_argument('--deactivated_somas', '-ds'
+            , nargs = 2
             , required = True
-            , default = 0.0
             , type = float
-            , help = "De-activated somas (fraction of total)"
+            , default = [-0.085, 0.0]
+            , help = "De-activated somas [initVm,fraction of total]"
             )
 
     parser.add_argument('--run_time', '-rt'
