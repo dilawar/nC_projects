@@ -12,7 +12,6 @@
 #st: synaptic threshold [Exc, Inhib]
 #sct: spike detection threshold value (V)
 #in: input pulse, triplet [freq, width (S), height (A)]
-#ds: Fraction of deactivated somas [clamping voltage (V), fractions of cells]
 #tp: types, num. plots of types (e.g. axon soma), num selected randomly e.g. 10
 #rt: run time in seconds.
 
@@ -21,11 +20,10 @@ set -x
 python ./simple_network.py -f \
     ./generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
     -nc 100 -ns 1000 \
-    -es 0.5 \
-    -sn 0.2 -bm 0.00000005 \
-    -sw 0.0025 -0.0025 -st -0.055 -0.055 \
-    -ds -0.070 0.0 \
-    -tp axon 10 \
+    -es 0.7 \
+    -sn 0.2 -bm 0.00005 \
+    -sw 0.006 -0.006 -st -0.055 -0.055 \
+    -tp axon 5 \
     -in 40 0.005 0.000000001 \
     -sct 0.015 \
     -rt 1

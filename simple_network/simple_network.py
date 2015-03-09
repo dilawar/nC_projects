@@ -36,8 +36,6 @@ synTables = {}
 outputTables = {}
 vmTables = {}
 
-iKTables = {}
-
 args = None
 
 import os, datetime
@@ -45,39 +43,18 @@ now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
 if not os.path.isdir(datadir): os.makedirs(datadir)
 
-moose.setClock(0, 10e-6)
-moose.setClock(1, 10e-6)
-
-# This clock is so slow that it nothing changes on cell
-moose.setClock(2, 1000)
-
-
-def deactivateSomas(comps):
-    global args
-    init, totalFraction = args.deactivated_somas
-    total = int(args.num_cells * totalFraction)
-    somas = []
-    for c in comps:
-        if "soma" in c.path.lower(): somas.append(c.path)
-    
-    mu.info("Deactivating total %s somas" % total)
-    _deactivateSomas = set(random.sample(somas, total))
-    assert len(_deactivateSomas) == total, "Expected %s somas to be deactivated" % total
-    for cpath in _deactivateSomas:
-        moose.Compartment(cpath).initVm = init
-        moose.useClock(2, cpath, 'process')
-
-
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
 
     #mu.info("Synapse (Excitatory?=%s): %s --> %s" % (excitatory, pre.path,
         #post.path))
+    moose.setClock(0, 1e-6)
+    moose.useClock(0, pre.path, 'process')
+    moose.useClock(0, post.path, 'process')
     spikegen = moose.SpikeGen('%s/spikegen' % pre.path)
     if excitatory:
         spikegen.threshold = float(args.synaptic_threshold[0])
-    
     else:
         spikegen.threshold = float(args.synaptic_threshold[1])
 
@@ -108,21 +85,6 @@ def make_synapse(pre, post, excitatory = True):
         else:
             synhandler.synapse[i].weight = float(args.synaptic_weights[1])
     synhandler.connect('activationOut', synchan, 'activation')
-
-
-def setupChannels():
-    global args
-    channels = moose.wildcardFind('/network/##[TYPE=HHChannel]')
-
-    elems = []
-    for c in channels:
-        if c.name == "KConductance":
-            elems.append(c)
-    es = random.sample(elems, 10)
-
-    global iKTables
-    for e in es: addTable(e, iKTables, 'getIk')
-
 
 
 def count_spikes(tables, threshold):
@@ -243,14 +205,15 @@ def setRecorder(elems, filters=[], total = 0):
         for f in filters:
             if f.lower() in el.path.lower(): out.append(el)
 
-    [addTable(o, outputTables)  for o in out]
+    [addTable(o)  for o in out]
     mu.info("Total %s recorders added" % len(outputTables))
 
-def addTable(elem, tables, field='getVm'):
+def addTable(elem, field='getVm'):
     table = None
     table = moose.Table('{}/table'.format(elem.path))
     table.connect('requestOut', elem, field)
     tables[elem.path] = table
+    outputTables[elem.path] = table
     return table
 
 def getSoma(cell):
@@ -290,6 +253,10 @@ def simulate(simulationTime, solver='hsolve'):
         moose.reinit()
 
     mu.info("Simulating for %s seconds" % simulationTime)
+    moose.setClock(1, 10e-6)
+    moose.useClock(1, '/network/##', 'process')
+    moose.reinit()
+
     moose.reinit()
     moose.start(simulationTime)
     
@@ -353,37 +320,22 @@ def main():
 
     modelFile = args.model_file
     loadCellModel(modelFile, args.num_cells)
-
-
     createRandomSynapse(args.num_synapse, args.excitatory_synapses)
 
     assert args.stimulated_neurons <= 1.0, "Fraction can't be larger than 1.0"
     stimulatedNeurons = int(args.num_cells * args.stimulated_neurons)
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
-    # This function changes the Gbar values of channels. Currently only K
-    # channel.
-    setupChannels()
+    comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
 
     filters = args.total_plots[0:-1]
     total = args.total_plots[-1]
 
-    comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
     setRecorder(comps, filters)
-
-    # Setup everything on default clock
-    moose.useClock(0, '/network/##', 'process')
-    moose.useClock(0, '/network/##', 'init')
-
-    deactivateSomas(comps)
-    moose.reinit()
-
+    
     mu.verify()
     simulate(simulationTime)
     plotTables(int(total))
-
-    global iKTables
-    mu.plotRecords(iKTables, subplot=True, legend=True, outfile='i_channel.png')
 
     totalSpikes = count_spikes(outputTables.values(), args.spike_count_threshold)
     print("[RESULT] Total spikes in axons: %s" % totalSpikes)
@@ -460,15 +412,6 @@ if __name__ == '__main__':
         , help = 'Total plots. Last entry is number of plots randomly selected'
             + '. Other entries are type of plots.'
         )
-
-    parser.add_argument('--deactivated_somas', '-ds'
-            , nargs = 2
-            , required = True
-            , type = float
-            , default = [-0.085, 0.0]
-            , help = "De-activated somas [initVm,fraction of total]"
-            )
-
     parser.add_argument('--run_time', '-rt'
         , required = True
         , type = float
