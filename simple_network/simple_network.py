@@ -43,6 +43,26 @@ now = datetime.datetime.now()
 datadir = "_data/%s" % (now.strftime('%Y%m%d-%H%M'))
 if not os.path.isdir(datadir): os.makedirs(datadir)
 
+moose.setClock(25, 2.0)
+
+def deactivateSomas(comps):
+    global args
+    init, totalFraction = args.deactivated_somas
+    total = int(args.num_cells * totalFraction)
+    mu.info("Deactivating %s somas" % total)
+    somas = []
+    for c in comps:
+        if "soma" in c.path.lower(): somas.append(c.path)
+    
+    mu.info("Deactivating total %s somas" % total)
+    _deactivateSomas = set(random.sample(somas, total))
+    assert len(_deactivateSomas) == total, "Expected %s somas to be deactivated" % total
+    for cpath in _deactivateSomas:
+        moose.Compartment(cpath).initVm = init
+        moose.useClock(25, cpath, 'process')
+        moose.useClock(0, cpath, 'init')
+
+
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
     #: sends out a spike event
@@ -332,7 +352,14 @@ def main():
     total = args.total_plots[-1]
 
     setRecorder(comps, filters)
-    
+
+    # Setup everything on default clock
+    #moose.useClock(0, '/network/##', 'process')
+    #moose.useClock(0, '/network/##', 'init')
+
+    deactivateSomas(comps)
+    moose.reinit()
+
     mu.verify()
     simulate(simulationTime)
     plotTables(int(total))
@@ -404,6 +431,13 @@ if __name__ == '__main__':
         , required = True
         , help = 'Input pulset to neurons [frequency, width (sec), height (A)]'
         )
+
+    parser.add_argument('--deactivated_somas', '-ds'
+            , nargs = 2
+            , type = float
+            , default = [-0.070, 0.0]
+            , help = "Fraction of somas to deactivate"
+            )
 
     parser.add_argument('--total_plots', '-tp'
         , nargs = '+'

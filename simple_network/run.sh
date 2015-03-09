@@ -13,6 +13,7 @@
 #sct: spike detection threshold value (V)
 #in: input pulse, triplet [freq, width (S), height (A)]
 #tp: types, num. plots of types (e.g. axon soma), num selected randomly e.g. 10
+#ds: Deactivated somas [soma clamped at V, fraction of somas to deactivate]
 #rt: run time in seconds.
 
 #rm -rf *.png
@@ -23,8 +24,9 @@ python ./simple_network.py -f \
     -es 0.7 \
     -sn 0.2 -bm 0.00005 \
     -sw 0.006 -0.006 -st -0.055 -0.055 \
-    -tp axon 5 \
+    -tp axon 10 \
     -in 40 0.005 0.000000001 \
+    -ds -0.070 0.9\
     -sct 0.015 \
-    -rt 1
+    -rt 0.25
 
