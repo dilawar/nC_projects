@@ -36,6 +36,9 @@ synTables = {}
 outputTables = {}
 vmTables = {}
 
+spikeTables = {}
+timeVec = None
+
 args = None
 
 import os, datetime
@@ -60,6 +63,7 @@ def deactivateSomas(comps):
     for cpath in _deactivateSomas:
         moose.Compartment(cpath).initVm = init
         moose.useClock(7, cpath, 'process')
+        moose.useClock(7, cpath, 'init')
 
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
@@ -104,13 +108,17 @@ def make_synapse(pre, post, excitatory = True):
             synhandler.synapse[i].weight = float(args.synaptic_weights[1])
     synhandler.connect('activationOut', synchan, 'activation')
 
-
 def count_spikes(tables, threshold):
+    '''Count the number of spikes, also pupulate the spikeTables '''
     nSpikes = 0
     spikeBegin = False
     spikeEnds = False
-    for t in tables:
-        for x in t.vector:
+    clock = moose.Clock('/clock')
+    for tname in tables:
+        t = tables[tname]
+        dt = clock.currentTime / len(t.vector)
+        spikeList = []
+        for i, x in enumerate(t.vector):
             if x > threshold:
                 if not spikeBegin:
                     spikeBegin = True
@@ -120,7 +128,9 @@ def count_spikes(tables, threshold):
                 if spikeBegin:
                     spikeEnds = True
                     spikeBegin = False
+                    spikeList.append(i*dt)
                     nSpikes += 1
+        spikeTables[tname] = spikeList
     return nSpikes
 
 
@@ -215,9 +225,7 @@ def addPulseGen(c1, bursting, **kwargs):
     tables[c1.path] = table
 
 def setRecorder(elems, filters=[], total = 0):
-    global outputTables, tables
     assert len(elems) > 1, "No elements are given for setting records"
-
     out = []
     for el in elems:
         for f in filters:
@@ -227,6 +235,7 @@ def setRecorder(elems, filters=[], total = 0):
     mu.info("Total %s recorders added" % len(outputTables))
 
 def addTable(elem, field='getVm'):
+    global outputTables, tables
     table = None
     table = moose.Table('{}/table'.format(elem.path))
     table.connect('requestOut', elem, field)
@@ -268,7 +277,6 @@ def simulate(simulationTime, solver='hsolve'):
         solver = moose.HSolve('/hsolve')
         solver.dt = 0.5e-6
         solver.target = '/network'
-        moose.reinit()
     moose.reinit()
     moose.start(simulationTime)
     
@@ -298,24 +306,44 @@ def plotTables(total):
     plotAverage(outputTables, outfile="avg_soma.png")
 
 def plotAverage(tables, outfile = None):
+    global timeVec
     avgs = []
-
     for k in tables:
-        avgs.append(tables[k].vector)
+        vec = tables[k].vector
+        if vec.max() > 0.7:
+            mu.warn("Ignoring this table: Vm is too positive")
+        if vec.min() < -0.1:
+            mu.warn("Ignoring this table: Vm is too negative")
+        else:
+            avgs.append(tables[k].vector)
 
     clock = moose.Clock('/clock')
     yvec = np.average(avgs, axis=0)
 
     pylab.figure()
-    pylab.plot(np.linspace(0, clock.currentTime, len(yvec)), yvec)
-    pylab.title("Average Vm of all axons")
+    timeVec = np.linspace(0, clock.currentTime, len(yvec))
+    pylab.plot(timeVec, yvec)
+    pylab.title("Average Vm (axons)")
     pylab.xlabel("Time (sec)")
-    pylab.ylabel("Vm (Volts)")
+    pylab.ylabel("Volts")
     if outfile:
         mu.info("Wrinting graph to %s" % outfile)
         pylab.savefig(outfile)
     else:
         pylab.show()
+
+def plotSpikeRaster(spikeTables):
+    pylab.figure()
+    clock = moose.Clock('/clock')
+    for i, tname in enumerate(spikeTables):
+        yvec = spikeTables[tname]
+        pylab.vlines(yvec, i, i+1, color='blue')
+    pylab.title("Spike raster plot")
+    pylab.ylabel("Index of axon")
+    pylab.xlabel("Time (sec)")
+    rasterFilename = 'spike_raster.png'
+    mu.info("Saving raster plot to %s" % rasterFilename)
+    pylab.savefig(rasterFilename)
 
 def main():
 
@@ -355,7 +383,8 @@ def main():
     simulate(simulationTime)
     plotTables(int(total))
 
-    totalSpikes = count_spikes(outputTables.values(), args.spike_count_threshold)
+    totalSpikes = count_spikes(outputTables, args.spike_count_threshold)
+    plotSpikeRaster(spikeTables)
     print("[RESULT] Total spikes in axons: %s" % totalSpikes)
 
     #mu.writeGraphviz('network.dot')
