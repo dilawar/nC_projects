@@ -63,7 +63,6 @@ def deactivateSomas(comps):
     for cpath in _deactivateSomas:
         moose.Compartment(cpath).initVm = init
         moose.useClock(7, cpath, 'process')
-        moose.useClock(7, cpath, 'init')
 
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
