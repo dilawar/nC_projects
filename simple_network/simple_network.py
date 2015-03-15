@@ -378,7 +378,6 @@ def main():
     deactivateSomas(comps)
     moose.reinit()
 
-    mu.verify()
     simulate(simulationTime)
     plotTables(int(total))
 
