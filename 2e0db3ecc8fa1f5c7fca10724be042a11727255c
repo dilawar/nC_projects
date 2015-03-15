@@ -1,0 +1,103 @@
+MODEL FOR FEDERICO
+
+A random network with given number of cells and synapses and other parameters.
+Cell is defined in a neuroml model.
+
+Script ./simple_network/simple_network.py has extenstive arguments.
+
+~~~~
+$ python simple_network.py -h
+
+usage: simple_network.py [-h] --model_file model_file --num_cells NUM_CELLS
+                         --num_synapse NUM_SYNAPSE --excitatory_synapses
+                         EXCITATORY_SYNAPSES --stimulated_neurons
+                         STIMULATED_NEURONS --burst_mode BURST_MODE
+                         --synaptic_threshold SYNAPTIC_THRESHOLD
+                         SYNAPTIC_THRESHOLD
+                         [--spike_count_threshold SPIKE_COUNT_THRESHOLD]
+                         --synaptic_weights SYNAPTIC_WEIGHTS SYNAPTIC_WEIGHTS
+                         --input INPUT INPUT INPUT
+                         [--deactivated_somas DEACTIVATED_SOMAS DEACTIVATED_SOMAS]
+                         --total_plots TOTAL_PLOTS [TOTAL_PLOTS ...]
+                         --run_time RUN_TIME
+
+A random network in moose
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --model_file model_file, -f model_file
+                        Path of single cell model in NML
+  --num_cells NUM_CELLS, -nc NUM_CELLS
+                        No of cells in network
+  --num_synapse NUM_SYNAPSE, -ns NUM_SYNAPSE
+                        No of synapse in network
+  --excitatory_synapses EXCITATORY_SYNAPSES, -es EXCITATORY_SYNAPSES
+                        Fraction of excitatory synapses.
+  --stimulated_neurons STIMULATED_NEURONS, -sn STIMULATED_NEURONS
+                        Fraction of cells spiking by external input.
+  --burst_mode BURST_MODE, -bm BURST_MODE
+                        Fraction of stimulated neurons firing in burst mode.
+  --synaptic_threshold SYNAPTIC_THRESHOLD SYNAPTIC_THRESHOLD, -st SYNAPTIC_THRESHOLD SYNAPTIC_THRESHOLD
+                        Synapse threshold [Excitatory, Inhibitory]
+  --spike_count_threshold SPIKE_COUNT_THRESHOLD, -sct SPIKE_COUNT_THRESHOLD
+                        When counting spikes, this value is taken as threshold
+  --synaptic_weights SYNAPTIC_WEIGHTS SYNAPTIC_WEIGHTS, -sw SYNAPTIC_WEIGHTS SYNAPTIC_WEIGHTS
+                        Synaptic weights [Excitatory, inhibitory]
+  --input INPUT INPUT INPUT, -in INPUT INPUT INPUT
+                        Input pulset to neurons [frequency, width (sec),
+                        height (A)]
+  --deactivated_somas DEACTIVATED_SOMAS DEACTIVATED_SOMAS, -ds DEACTIVATED_SOMAS DEACTIVATED_SOMAS
+                        Fraction of somas to deactivate
+  --total_plots TOTAL_PLOTS [TOTAL_PLOTS ...], -tp TOTAL_PLOTS [TOTAL_PLOTS ...]
+                        Total plots. Last entry is number of plots randomly
+                        selected. Other entries are type of plots.
+  --run_time RUN_TIME, -rt RUN_TIME
+                        Simulation time in seconds.
+
+~~~~
+
+The script `simple_network/run.sh` can be used to run this script.
+
+~~~~
+
+set -x
+python  ./simple_network.py -f \
+    ./generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
+    -nc 100 \
+    -ns 1000 \
+    -es 0.7 \
+    -sn 0.2 -bm 0.00005 \
+    -sw 0.0025 -0.0025 \
+    -st -0.055 -0.055 \
+    -tp axon 5 \
+    -in 40 0.005 0.000000001 \
+    -ds -0.070 0.30 \
+    -sct 0.015 \
+    -rt 1
+
+~~~~~
+
+1. Default clock setting does not produce desired activity in network. I used
+one clock for all elements except for deactivated cells and synapses.
+
+2. No of spikes generated is dependent of clock `dt`. I think this should be
+mentioned in moose.docs; that network activity depends on clock dt settings.
+Users should be advaised to take note of clock settings.
+
+3. To deactivate certain somas, I used a very slow clock.
+    moose.setClock(7, 10000)
+
+Now the following works:
+
+    for cpath in _deactivateSomas:
+        moose.Compartment(cpath).initVm = init
+        moose.useClock(7, cpath, 'process')
+
+But this does not:
+
+    for cpath in _deactivateSomas:
+        moose.Compartment(cpath).initVm = init
+        moose.useClock(7, cpath, 'process')
+        moose.useClock(7, cpath, 'init')
+
+This is a subtle issue and not alawys easy to catch.
