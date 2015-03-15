@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-### NOTICE: Do not write negative numbers in sceintific notations.
+### NOTE: Do not write negative numbers in sceintific notations.
 
 ## PARAMTERS
 #nc: Number of cells
@@ -18,16 +18,17 @@
 
 #rm -rf *.png3
 set -x
-python ./simple_network.py -f \
+python  ./simple_network.py -f \
     ./generatedNeuroML/L3Net_17-Feb-15_16-16-18.nml1 \
-    -nc 100 -ns 3000 \
+    -nc 100 \
+    -ns 1000 \
     -es 0.7 \
     -sn 0.2 -bm 0.00005 \
     -sw 0.0025 -0.0025 \
     -st -0.055 -0.055 \
     -tp axon 5 \
-    -in 7 0.005 0.000000001 \
-    -ds -0.070 0.0 \
+    -in 40 0.005 0.000000001 \
+    -ds -0.070 0.30 \
     -sct 0.015 \
     -rt 1
 
