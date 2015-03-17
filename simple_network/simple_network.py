@@ -63,7 +63,6 @@ def deactivateSomas(comps):
     for cpath in _deactivateSomas:
         moose.Compartment(cpath).initVm = init
         moose.useClock(7, cpath, 'process')
-        moose.useClock(7, cpath, 'init')
 
 def make_synapse(pre, post, excitatory = True):
     #: SpikeGen detects when presynaptic Vm crosses threshold and
@@ -303,7 +302,35 @@ def plotTables(total):
     #        , title = "Synaptic tables"
     #        , outfile = 'synchan.png')
 
-    plotAverage(outputTables, outfile="avg_soma.png")
+    plotSum(outputTables, outfile="sum_somas.png")
+
+def plotSum(tables, outfile = None):
+    global timeVec
+    avgs = []
+    for k in tables:
+        vec = tables[k].vector
+        if vec.max() > 0.7:
+            mu.warn("Ignoring this table: Vm is too positive")
+        if vec.min() < -0.1:
+            mu.warn("Ignoring this table: Vm is too negative")
+        else:
+            avgs.append(tables[k].vector)
+
+    clock = moose.Clock('/clock')
+    yvec = np.sum(avgs, axis=0)
+
+    pylab.figure()
+    timeVec = np.linspace(0, clock.currentTime, len(yvec))
+    pylab.plot(timeVec, yvec)
+    pylab.title("Sum of Vm (axons)")
+    pylab.xlabel("Time (sec)")
+    pylab.ylabel("Volts")
+    if outfile:
+        mu.info("Wrinting graph to %s" % outfile)
+        pylab.savefig(outfile)
+    else:
+        pylab.show()
+
 
 def plotAverage(tables, outfile = None):
     global timeVec
@@ -367,6 +394,7 @@ def main():
     setupStimulus(stimulatedNeurons, args.burst_mode)
 
     comps = moose.wildcardFind('/network/##[TYPE=Compartment]')
+    for c in comps: c.initVm = args.resting_potential
 
     filters = args.total_plots[0:-1]
     total = args.total_plots[-1]
@@ -387,7 +415,7 @@ def main():
     plotSpikeRaster(spikeTables)
     print("[RESULT] Total spikes in axons: %s" % totalSpikes)
 
-    #mu.writeGraphviz('network.dot')
+    mu.writeGraphviz('network.dot', node_shapes='point')
 
 if __name__ == '__main__':
     import argparse
@@ -452,6 +480,12 @@ if __name__ == '__main__':
         , help = 'Input pulset to neurons [frequency, width (sec), height (A)]'
         )
 
+    parser.add_argument('--resting_potential', '-rp'
+            , type = float
+            , default = -65e-3
+            , help = 'Resting potential of all cell'
+            )
+        
     parser.add_argument('--deactivated_somas', '-ds'
             , nargs = 2
             , type = float
