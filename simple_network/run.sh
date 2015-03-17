@@ -10,6 +10,7 @@
 #bm: Stimulated neurons firing in burst mode (fraction of sn)
 #sw: synaptic weights [Excitatory, Inhib]
 #st: synaptic threshold [Exc, Inhib]
+#rp: Resting potential of cells.
 #sct: spike detection threshold value (V)
 #in: input pulse, triplet [freq, width (S), height (A)]
 #tp: types, num. plots of types (e.g. axon soma), num selected       randomly e.g. 10
@@ -23,6 +24,7 @@ python  ./simple_network.py -f \
     -nc 100 \
     -ns 1000 \
     -es 0.7 \
+    -rp -0.085 \
     -sn 0.2 -bm 0.00005 \
     -sw 0.0005 -0.0005 \
     -st -0.055 -0.055 \
