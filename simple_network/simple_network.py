@@ -302,7 +302,7 @@ def plotTables(total):
     #        , title = "Synaptic tables"
     #        , outfile = 'synchan.png')
 
-    plotSum(outputTables, outfile="sum_somas.png")
+    plotSum(outputTables, outfile="sum_axons.png")
 
 def plotSum(tables, outfile = None):
     global timeVec
