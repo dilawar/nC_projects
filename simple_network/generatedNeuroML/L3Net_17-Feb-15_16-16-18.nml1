@@ -104,7 +104,7 @@ Complete network structure generated with project: simple_cell saved with neuroC
 
 #==================================================================
 
-                    <bio:parameter name="gmax" value="3">
+                    <bio:parameter name="gmax" value="5">
 
 #==================================================================
 
@@ -134,14 +134,8 @@ Complete network structure generated with project: simple_cell saved with neuroC
                         <bio:group>all</bio:group>
                     </bio:parameter>
                 </bio:spec_capacitance>
-
-#################################################################
-
                 <bio:spec_axial_resistance>
                     <bio:parameter value="0.03">
-
-#################################################################
-
                         <bio:group>all</bio:group>
                     </bio:parameter>
                 </bio:spec_axial_resistance>
