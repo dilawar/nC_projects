@@ -214,7 +214,7 @@ def addPulseGen(c1, bursting, **kwargs):
         pulse.delay[0] = 4e-3
         pulse.width[0] = 3e-1
     else:
-        pulse.delay[0] = delay
+        pulse.delay[1] = delay
         pulse.width[0] = float(width)
 
     pulse.connect('output', c1, 'injectMsg')
@@ -302,7 +302,7 @@ def plotTables(total):
     #        , title = "Synaptic tables"
     #        , outfile = 'synchan.png')
 
-    plotSum(outputTables, outfile="sum_somas.png")
+    plotSum(outputTables, outfile="sum_axons.png")
 
 def plotSum(tables, outfile = None):
     global timeVec
