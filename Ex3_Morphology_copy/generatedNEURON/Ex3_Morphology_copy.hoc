@@ -76,7 +76,7 @@ if (strFuncs.len(host)>0) {
 
 {use_mcell_ran4(1)}
 
-{mcell_ran4_init(837470898)}
+{mcell_ran4_init(719942900)}
 
 
 func isCellOnNode() {
