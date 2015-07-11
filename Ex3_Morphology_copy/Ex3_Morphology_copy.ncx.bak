@@ -24,7 +24,7 @@ For more details on importing each format see the documentation under menu item 
    <string>neuroConstruct v1.7.1</string>
   </void>
   <void property="projectName">
-   <string>Ex3_Morphology</string>
+   <string>Ex3_Morphology_copy</string>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.RegionsInfo" id="RegionsInfo0">
