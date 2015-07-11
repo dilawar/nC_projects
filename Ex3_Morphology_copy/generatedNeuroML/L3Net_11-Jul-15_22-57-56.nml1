@@ -3,7 +3,7 @@
 
 <meta:notes>
 
-Complete network structure generated with project: Ex3_Morphology_copy saved with neuroConstruct v1.7.1 on: 22:33:00, 11-Jul-15
+Complete network structure generated with project: Ex3_Morphology_copy saved with neuroConstruct v1.7.1 on: 22:57:56, 11-Jul-15
 
 Cell Group: CellGroup_1 contains 1 cells
 
@@ -11,7 +11,7 @@ Cell Group: CellGroup_1 contains 1 cells
 </meta:notes>
 
 <meta:properties>
-    <meta:property tag="neuroConstruct_random_seed" value="1244839986"/>
+    <meta:property tag="neuroConstruct_random_seed" value="-452005388"/>
 
     <meta:property tag="neuroConstruct_sim_config" value="Default Simulation Configuration"/>
 
@@ -7402,7 +7402,7 @@ SCALE 1.33  1.33  2.5
         </meta:properties>
         <instances size="1">
             <instance id="0">
-                <location x="78.7733" y="22.171402" z="73.12189"/>
+                <location x="64.79381" y="45.2594" z="70.0903"/>
             </instance>
         </instances>
     </population>
