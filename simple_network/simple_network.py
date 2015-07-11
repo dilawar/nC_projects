@@ -211,7 +211,7 @@ def addPulseGen(c1, bursting, **kwargs):
     pulse = moose.PulseGen('%s/pulse' % c1.path)
     pulse.level[0] = float(height)
     if bursting:
-        pulse.delay[0] = 4e-1
+        pulse.delay[0] = 4e-3
         pulse.width[0] = 3e-1
     else:
         pulse.delay[1] = delay
