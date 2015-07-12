@@ -4,28 +4,49 @@ import sys
 import moose
 import moose.neuroml as nml
 import moose.utils as mu
+import moose.backend as backend
+
+records_ = {}
 
 def getSoma(compts):
+    compName = "Comp_1_0"
     for c in compts:
-        if "Comp_1_0" in c.path:
-            return c
+        if compName in c.path:
+            return compName, c
 
-def setRecorder(soma):
+def setRecorder(compt):
     table = moose.Table('/table')
-    table.connect('requestOut', soma, 'getVm')
-    return table
+    table.connect('requestOut', compt, 'getVm')
+    records_[compt.path] = table
+
+def getStimulus():
+    stims = moose.wildcardFind('/elec/##[TYPE=DiffAmp]')
+    table1 = moose.Table('/table2')  
+    print stims[-1].neighbors['output']
+    table1.connect('requestOut', stims[-1], 'getOutputValue')
+    records_[ stims[-1].path ] = table1
+
+def simulate(time):
+    compts = moose.wildcardFind('/cells/##[TYPE=Compartment]')
+    compName, compt = getSoma(compts)
+    setRecorder(compt)
+    mu.summary()
+    moose.reinit()
+    moose.start(time)
+    #mu.plotRecords( { compName : table }, outfile = 'soma.png')
+    mu.plotRecords(records_, subplot=True) #, outfile = 'soma.png')
+    #print("Min, Max, Avg: %s, %s, %s" % (table.vector.min(), table.vector.max()
+    #    , table.vector.mean()))
+
 
 def main():
-    filename = './generatedNeuroML/L3Net_11-Jul-15_22-57-56.nml1'
+    filename = sys.argv[1] #'./generatedNeuroML/Generated.net.xml'
     print("Loading into MOOSE: %s" % filename)
     nml.loadNeuroML_L123(filename)
-    compts = moose.wildcardFind('/cells/##[TYPE=Compartment]')
-    soma = getSoma(compts)
-    table = setRecorder(soma)
-    mu.verify()
-    moose.reinit()
-    moose.start(0.2)
-    mu.plotRecords( { 'soma' : table }, outfile = 'soma.png')
+    for path in moose.wildcardFind('/library/##'):
+        path.tick = -1
+    getStimulus()
+    simulate(0.1)
 
 if __name__ == '__main__':
     main()

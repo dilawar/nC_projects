@@ -190,17 +190,11 @@ For more details on importing each format see the documentation under menu item 
   <void property="copySimFiles">
    <boolean>true</boolean>
   </void>
-  <void property="dataSaveFormat">
-   <object class="java.lang.Enum" method="valueOf">
-    <class>ucl.physiol.neuroconstruct.neuron.NeuronSettings$DataSaveFormat</class>
-    <string>HDF5_NC</string>
-   </object>
-  </void>
   <void property="genAllModFiles">
    <boolean>true</boolean>
   </void>
-  <void property="showShapePlot">
-   <boolean>true</boolean>
+  <void property="modSilentMode">
+   <boolean>false</boolean>
   </void>
   <void property="varTimeStep">
    <boolean>true</boolean>
@@ -220,7 +214,7 @@ For more details on importing each format see the documentation under menu item 
    <float>100.0</float>
   </void>
   <void property="reference">
-   <string>Sim_3</string>
+   <string>Sim_5</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>

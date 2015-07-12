@@ -7354,15 +7354,6 @@ SCALE 1.33  1.33  2.5
                     </bio:parameter>
                 </bio:mechanism>
 
-                <bio:mechanism name="LeakConductance" type="Channel Mechanism" passive_conductance="true">
-                    <bio:parameter name="e" value="-54.3">
-                        <bio:group>all</bio:group>
-                    </bio:parameter>
-                    <bio:parameter name="gmax" value="0.3">
-                        <bio:group>all</bio:group>
-                    </bio:parameter>
-                </bio:mechanism>
-
                 <bio:mechanism name="NaConductance" type="Channel Mechanism">
                     <bio:parameter name="gmax" value="120.0">
                         <bio:group>all</bio:group>
