@@ -16,19 +16,16 @@ def setRecorder(soma):
     return table
 
 def main():
-    filename = sys.argv[1]
+    filename = './generatedNeuroML/L3Net_11-Jul-15_22-57-56.nml1'
     print("Loading into MOOSE: %s" % filename)
     nml.loadNeuroML_L123(filename)
     compts = moose.wildcardFind('/cells/##[TYPE=Compartment]')
     soma = getSoma(compts)
     table = setRecorder(soma)
-    tables = moose.wildcardFind('/##[TYPE=Table]')
-    print soma
-    print tables
     mu.verify()
     moose.reinit()
     moose.start(0.2)
-    mu.plotRecords( { 'soma' : table })
+    mu.plotRecords( { 'soma' : table }, outfile = 'soma.png')
 
 if __name__ == '__main__':
     main()
