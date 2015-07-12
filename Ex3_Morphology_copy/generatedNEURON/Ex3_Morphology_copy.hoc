@@ -76,7 +76,7 @@ if (strFuncs.len(host)>0) {
 
 {use_mcell_ran4(1)}
 
-{mcell_ran4_init(527189806)}
+{mcell_ran4_init(1029083970)}
 
 
 func isCellOnNode() {
@@ -158,7 +158,7 @@ a_CellGroup_1[0].Soma {
     stim_Input_0[0] = new CurrentClampExt(0.33331072)
     stim_Input_0[0].del = 20.0
     stim_Input_0[0].dur = 60.0
-    stim_Input_0[0].amp = 0.2
+    stim_Input_0[0].amp = 1.0
     stim_Input_0[0].repeat = 0
 }
 
@@ -221,7 +221,7 @@ for i=0, 0 {
 objref f_CellGroup_1_seg_Comp_1_v[1]
 
 strdef simReference
-simReference = "Sim_4"
+simReference = "Sim_5"
 
 
 

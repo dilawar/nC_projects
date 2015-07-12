@@ -41,16 +41,16 @@ Cell Group: CellGroup_1 contains 1 cells
             <!--There are no synaptic connections present in the network-->
 
 
-        <inputs units="SI Units">
-    <input name="Input_0">
-        <pulse_input delay="0.02" duration="0.06" amplitude="1.0E-9"/>
-        <target population="CellGroup_1">
-            <sites size="1">
-            <site cell_id="0" segment_id="0" fraction_along="0.5"/>
-        </sites>
-        </target>
-    </input>
-</inputs>
+        <!--<inputs units="SI Units">-->
+    <!--<input name="Input_0">-->
+        <!--<pulse_input delay="0.02" duration="0.06" amplitude="1.0E-9"/>-->
+        <!--<target population="CellGroup_1">-->
+            <!--<sites size="1">-->
+            <!--<site cell_id="0" segment_id="0" fraction_along="0.5"/>-->
+        <!--</sites>-->
+        <!--</target>-->
+    <!--</input>-->
+<!--</inputs>-->
 
 
 
