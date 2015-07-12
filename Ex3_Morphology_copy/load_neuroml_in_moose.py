@@ -42,6 +42,7 @@ def main():
     soma = stimulus(compts)
     setRecorder(soma)
     moose.reinit()
+    mu.summary()
     moose.start(0.1)
     print("Plotting")
     mu.plotRecords(records_) # outfile='soma.png')
