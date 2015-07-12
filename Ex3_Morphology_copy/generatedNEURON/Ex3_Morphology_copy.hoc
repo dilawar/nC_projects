@@ -76,7 +76,7 @@ if (strFuncs.len(host)>0) {
 
 {use_mcell_ran4(1)}
 
-{mcell_ran4_init(719942900)}
+{mcell_ran4_init(527189806)}
 
 
 func isCellOnNode() {
@@ -190,15 +190,6 @@ CellGroup_1_v = new Graph(0)
     graphList[0].append(CellGroup_1_v)
 }
 
-//   This code pops up a Shape plot of the cells
-
-objref plotShape
-plotShape = new PlotShape()
-plotShape.exec_menu("Shape Plot")
-
-fast_flush_list.append(plotShape)
-
-
 //////////////////////////////////////////////////////////////////////
 //   This will run a full simulation of 5001 steps when the hoc file is executed
 //////////////////////////////////////////////////////////////////////
@@ -212,7 +203,7 @@ objref propsFile
 
 v_time = new Vector()
 { v_time.record(&t) }
-{ v_time.resize(5001) } // true
+{ v_time.resize(5001) } // false
 f_time = new File()
 
 
@@ -230,7 +221,7 @@ for i=0, 0 {
 objref f_CellGroup_1_seg_Comp_1_v[1]
 
 strdef simReference
-simReference = "Sim_2"
+simReference = "Sim_4"
 
 
 
@@ -274,46 +265,21 @@ print "Finished simulation in ", realruntime ,"seconds"
 print "Storing the data..."
 
 strdef timeFilename
-nrnpython("import numpy")
-nrnpython("import tables")
-
-nrnpython("from neuron import *")
-
-
-nrnpython("h5file = tables.openFile(h.targetDir+'Sim_2_.h5', mode = 'w', title = 'Generated via neuroConstruct')")
-
 
 //  Saving VOLTAGE on only one seg, id: 0, in the only cell in CellGroup_1
 
 
 //  Saving vector for segment: Comp_1(ID: 0)
 
-print "Using HDF5 save mode: 4"
-{nrnpython("allData = numpy.ones( (h.v_time.size(), h.n_CellGroup_1_local ) , dtype=numpy.float32 )")}
-{nrnpython("time_data = numpy.array(h.v_time.to_python()) ")}
-{nrnpython("allData = allData * -1")}
-{nrnpython("print allData.shape")}
-
-{nrnpython("columnsVsCellNums = {}")}
-
-{nrnpython("columnIndex = 0")}
-
-for cellNum=0, n_CellGroup_1-1 {
-    { print "Adding data for cell number ",cellNum," in CellGroup_1 on host ", hostid}
-    { nrnpython("allData[:,columnIndex] = h.v_CellGroup_1_seg_Comp_1_v[int(h.cellNum)].to_python()")}
-    {nrnpython("columnsVsCellNums[columnIndex] = int(h.cellNum)")}
-
-    {nrnpython("columnIndex += 1")}
-
+for i=0, 0 {
+    f_CellGroup_1_seg_Comp_1_v[i] = new File()
+    strdef filename
+    {sprint(filename, "%sCellGroup_1_%d.dat", targetDir, i)}
+    f_CellGroup_1_seg_Comp_1_v[i].wopen(filename)
+    v_CellGroup_1_seg_Comp_1_v[i].printf(f_CellGroup_1_seg_Comp_1_v[i])
+    f_CellGroup_1_seg_Comp_1_v[i].close()
 }
 
-{nrnpython("print columnsVsCellNums")}
-
-{nrnpython("group1 = h5file.createGroup('/', 'CellGroup_1', 'CellGroup_1')")}
-{nrnpython("group1._v_attrs.Population = 'CellGroup_1'")}
-{nrnpython("hArray = h5file.createArray(group1, 'VOLTAGE', allData, 'Values of VOLTAGE from cell group: CellGroup_1')")}
-{nrnpython("hArray.setAttr('Variable', 'VOLTAGE')")}
-{nrnpython("for columnIndex in columnsVsCellNums.keys(): hArray.setAttr('column_'+str(columnIndex), 'cellNum_'+ str(columnsVsCellNums[columnIndex]))")}
 
 { sprint(timeFilename, "%s%s", targetDir, "time.dat")}
 { f_time.wopen(timeFilename) }
@@ -336,8 +302,6 @@ strdef propsFilename
 
 print "Data stored in ",savetime, "secs in directory: ", targetDir
 
-{nrnpython("print 'Closing file: '+h5file.filename")}
-{nrnpython("h5file.close()")}
 
 //   This code pops up a simple Run Control
 

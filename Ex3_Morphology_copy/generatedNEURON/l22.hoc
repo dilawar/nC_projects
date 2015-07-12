@@ -5853,6 +5853,35 @@ proc biophys() {
     forsec all cm = 1.0
     forsec all Ra = 30.0
 
+    forsec all { 
+//      Assuming parameters other than max cond dens are set in the mod file...
+
+        insert LeakConductance  { gmax_LeakConductance = 3.0E-4 }  
+//      Ion non_specific is used in this mechanism...
+
+
+    }
+
+    forsec all { 
+//      Assuming parameters other than max cond dens are set in the mod file...
+
+        insert NaConductance  { gmax_NaConductance = 0.12 }  
+//      Ion na is used in this mechanism...
+
+        ena = 50.0  // note: this is val from ChannelML, may be reset later
+
+    }
+
+    forsec all { 
+//      Assuming parameters other than max cond dens are set in the mod file...
+
+        insert KConductance  { gmax_KConductance = 0.036 }  
+//      Ion k is used in this mechanism...
+
+        ek = -77.0  // note: this is val from ChannelML, may be reset later
+
+    }
+
 }
 
 proc geom_nseg() {
