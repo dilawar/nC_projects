@@ -59,7 +59,7 @@ def main():
     mu.summary()
     moose.start(0.1)
     print("Plotting")
-    mu.plotRecords(records_, subplot=True)
+    mu.plotRecords(records_, subplot=True, outfile='soma.svg')
     verifyTables()
 
 if __name__ == '__main__':
