@@ -46,9 +46,13 @@ def stimulus(compts):
     return soma_
 
 def main():
+    import nml_reader
     filename = sys.argv[1] #'./generatedNeuroML/Generated.net.xml'
     print("Loading into MOOSE: %s" % filename)
-    nml.loadNeuroML_L123(filename)
+    nmlObj = nml_reader.NML()
+    nmlObj.load(filename)
+    quit()
+    #nml.loadNeuroML_L123(filename)
     for p in moose.wildcardFind('/library/##'): p.tick = -1
 
     compts = moose.wildcardFind('/cells/##[TYPE=Compartment]')
