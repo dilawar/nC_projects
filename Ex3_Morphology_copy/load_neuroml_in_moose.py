@@ -49,18 +49,22 @@ def main():
     filename = sys.argv[1] #'./generatedNeuroML/Generated.net.xml'
     print("Loading into MOOSE: %s" % filename)
     nml.loadNeuroML_L123(filename)
-    moose.delete('/library')
+    for p in moose.wildcardFind('/library/##'): p.tick = -1
 
     compts = moose.wildcardFind('/cells/##[TYPE=Compartment]')
+    print("Total compartment in cell: %s" % len(compts))
+
     soma = stimulus(compts)
     setRecorder(soma)
-
+    hsolve = moose.HSolve('/hsolve')
+    hsolve.target = '/cells/l22'
     moose.reinit()
+
     mu.summary()
     moose.start(0.1)
     print("Plotting")
-    mu.plotRecords(records_, subplot=True, outfile='soma.svg')
     verifyTables()
+    mu.plotRecords(records_, subplot=True, outfile='soma.svg')
 
 if __name__ == '__main__':
     main()
