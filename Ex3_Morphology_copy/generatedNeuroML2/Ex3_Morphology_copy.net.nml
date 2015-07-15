@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  https://raw.githubusercontent.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta4.xsd" id="network_Ex3_Morphology_copy">
+
+    <notes>
+
+Network structure (NeuroML 2beta4) for project: Ex3_Morphology_copy saved with neuroConstruct v1.7.1 on: 16:22:55, 15-Jul-15
+
+Cell Group: CellGroup_1 contains 1 cells
+
+
+
+    </notes>
+
+
+    <include href="KConductance.channel.nml"/>
+    <include href="l22.cell.nml"/>
+    <include href="NaConductance.channel.nml"/>
+    <pulseGenerator id="Input_0" delay="0.02s" duration="0.06s" amplitude="2.0E-10A"/>
+    
+    <network id="network_Ex3_Morphology_copy" type="networkWithTemperature" temperature="6.3 degC">
+
+        
+
+        <population id="CellGroup_1" component="l22" type="populationList" size="1">
+           <annotation>
+                <property tag="color" value="0.390625 0.94921875 0.9375"/>
+            </annotation>
+            <instance id="0">
+                <location x="30.980223" y="31.674501" z="70.35752"/>
+            </instance>
+        </population>
+
+
+
+            <!--There are no synaptic connections present in the network-->
+
+
+        <inputList id="Input_0" component="Input_0" population="CellGroup_1">
+            <input id="0" target="../CellGroup_1/0/l22" destination="synapses"/>
+        </inputList>
+
+
+
+
+
+    </network>
+
+</neuroml>
