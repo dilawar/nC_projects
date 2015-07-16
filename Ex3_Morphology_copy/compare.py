@@ -28,7 +28,7 @@ def compare(fileA, fileB):
     pylab.plot(nrnData[0], nrnData[1],
             label = 'neuron')
     pylab.legend(loc='best', framealpha=0.4)
-    pylab.show()
+    pylab.savefig('moose_neuron.png')
 
 def main():
     mooseFile = sys.argv[1]

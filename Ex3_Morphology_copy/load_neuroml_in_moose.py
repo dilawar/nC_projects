@@ -4,15 +4,26 @@ import sys
 import moose
 import moose.neuroml as nml
 import moose.utils as mu
+import math
 
 records_ = {}
 somaPath_ = "Comp_1_0"
 soma_ = None
 
+RM = 1
+CM = 0.01 # this is from neuron script.
+RA = 0.30 # This is also from neuron script.
+
 def getSoma(compts):
     compName = somaPath_ #"Comp_1_0"
     for c in compts:
-        c.Rm = 4e12
+        SA = math.pi * c.diameter * c.length
+        CS = math.pi * c.diameter * c.diameter / (c.length * 4.0)
+        c.Rm = RM / SA
+        c.Cm = CM * SA
+        c.Ra = RA * c.length / CS
+        c.initVm = -60e-3
+        c.Em = -70e-3
         if compName in c.path:
            soma_ = c
     return soma_
