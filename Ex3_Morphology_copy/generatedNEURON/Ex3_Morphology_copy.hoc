@@ -14,7 +14,7 @@ print ""
 print "*****************************************************"
 print ""
 print "    neuroConstruct generated NEURON simulation "
-print "    for project: /home1/dilawars/nC_projects/Ex3_Morphology_copy/Ex3_Morphology_copy.ncx "
+print "    for project: /home_local/dilawars/nC_projects/Ex3_Morphology_copy/Ex3_Morphology_copy.ncx "
 print ""
 print "    Description: This example demonstrates importation of a number of cell morphology files in different formats, including the Purkinje Cell Model of Erik De Schutter and Jim Bower."
 print "    "
@@ -226,7 +226,7 @@ simReference = "Sim_5"
 
 
 strdef simsDir
-simsDir = "/home1/dilawars/nC_projects/Ex3_Morphology_copy/simulations/"
+simsDir = "/home_local/dilawars/nC_projects/Ex3_Morphology_copy/simulations/"
 
 
 //  Note: to change location of the generated simulation files, just change value of targetDir
