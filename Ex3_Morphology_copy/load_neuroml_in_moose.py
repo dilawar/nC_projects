@@ -12,7 +12,7 @@ soma_ = None
 def getSoma(compts):
     compName = somaPath_ #"Comp_1_0"
     for c in compts:
-        c.Rm = 1e12
+        c.Rm = 4e12
         if compName in c.path:
            soma_ = c
     return soma_
@@ -55,7 +55,6 @@ def main():
 
     nml.loadNeuroML_L123(filename)
 
-
     for p in moose.wildcardFind('/library/##'): p.tick = -1
 
     compts = moose.wildcardFind('/cells/##[TYPE=Compartment]')
@@ -72,8 +71,8 @@ def main():
     moose.start(0.1)
     print("Plotting")
     verifyTables()
-    mu.plotRecords(records_, subplot = True) #, subplot=True, outfile='soma.svg')
-    mu.saveRecords(records_, outfile = 'moose_run.csv')
+    #mu.plotRecords(records_, subplot = True) #, subplot=True, outfile='soma.svg')
+    mu.saveRecords(records_, outfile = 'moose_run_output.csv')
 
 if __name__ == '__main__':
     main()
