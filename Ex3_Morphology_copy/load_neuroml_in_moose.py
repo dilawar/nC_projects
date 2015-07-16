@@ -33,18 +33,19 @@ def stimulus(compts):
     soma_ = getSoma(compts)
     assert soma_
 
-    #pulsegen = moose.PulseGen('/pulsegen')
-    #pulsegen.level[0] = 1e-9
-    #pulsegen.delay[0] = 20e-3
-    #pulsegen.width[0] = 40e-3
+    pulsegen = moose.PulseGen('/pulsegen')
+    pulsegen.level[0] = 1e-9
+    pulsegen.delay[0] = 20e-3
+    pulsegen.width[0] = 60e-3
+    pulsegen.delay[1] = 20
 
-    #pulsegenTable = moose.Table('/pulsegenTab')
-    #pulsegenTable.connect('requestOut', pulsegen, 'getOutputValue')
+    pulsegenTable = moose.Table('/pulsegenTab')
+    pulsegenTable.connect('requestOut', pulsegen, 'getOutputValue')
 
-    #pulsegen.connect('output', soma_, 'injectMsg')
+    pulsegen.connect('output', soma_, 'injectMsg')
 
     #records_['pulse_gen'] = pulsegenTable
-    soma_.inject = 1e-9
+    #soma_.inject = 1e-9
     moose.showfield(soma_)
     return soma_
 
@@ -63,16 +64,15 @@ def main():
     soma = stimulus(compts)
     setRecorder(soma)
     hsolve = moose.HSolve('/hsolve')
-    hsolve.dt = 50e-6
+    #hsolve.dt = 50e-6
     hsolve.target = '/cells'
     moose.reinit()
-
 
     mu.summary()
     moose.start(0.1)
     print("Plotting")
     verifyTables()
-    mu.plotRecords(records_) #, subplot=True, outfile='soma.svg')
+    mu.plotRecords(records_, subplot = True) #, subplot=True, outfile='soma.svg')
 
 if __name__ == '__main__':
     main()
