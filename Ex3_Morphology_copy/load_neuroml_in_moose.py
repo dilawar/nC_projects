@@ -73,6 +73,7 @@ def main():
     print("Plotting")
     verifyTables()
     mu.plotRecords(records_, subplot = True) #, subplot=True, outfile='soma.svg')
+    mu.saveRecords(records_, outfile = 'moose_run.csv')
 
 if __name__ == '__main__':
     main()
